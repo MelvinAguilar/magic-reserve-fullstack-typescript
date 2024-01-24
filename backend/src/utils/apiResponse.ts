@@ -4,13 +4,19 @@ export const sendResponse = (
   res: Response,
   statusCode: number,
   data: any,
-  results: any = null,
+  recordCount?: number | null,
 ): void => {
+  const resultsCount =
+    recordCount !== null && recordCount !== undefined
+      ? { recordCount: recordCount }
+      : {};
+
   const status = statusCode >= 200 && statusCode < 300 ? 'success' : 'error';
+
   res.status(statusCode).json({
     status,
-    results,
     data,
+    ...resultsCount,
   });
 };
 
