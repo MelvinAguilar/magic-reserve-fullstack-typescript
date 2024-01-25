@@ -6,9 +6,11 @@ const AppError = require('./../utils/appError');
 
 // Require all route modules
 const tourRouter = require('./tour.router');
+const authRouter = require('./user.router');
 
 // Use all route modules
 router.use('/tours', tourRouter);
+router.use('/users', authRouter);
 
 // Handle all invalid routes
 router.all('*', (req: Request, _res: Response, next: NextFunction) => {
