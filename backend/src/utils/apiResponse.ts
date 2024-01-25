@@ -26,8 +26,9 @@ export const sendError = (
   err: any,
 ): void => {
   res.status(statusCode).json({
-    status: 'error',
-    message: err?.message || 'Something went wrong',
+    status:  `${statusCode}`.startsWith('4') ? 'fail' : 'error',
+    isOperational: true,
+    message: typeof err === 'string' ? err : (err?.message || 'Something went wrong'),
   });
 };
 

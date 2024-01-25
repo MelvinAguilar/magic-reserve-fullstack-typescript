@@ -1,10 +1,12 @@
 const Tour = require('../models/tour.model');
-import { sendResponse, sendError } from './../utils/apiResponse';
-import { Request, Response } from 'express';
+import { sendResponse } from './../utils/apiResponse';
+import { NextFunction, Request, Response } from 'express';
 const APIFeatures = require('./../utils/apiFeatures');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('./../utils/appError');
 
-exports.getAllTours = async (_req: Request, res: Response) => {
-  try {
+exports.getAllTours = catchAsync(
+  async (_req: Request, res: Response, _next: NextFunction) => {
     const tours = new APIFeatures(Tour.find(), _req.query)
       .filter()
       .sort()
@@ -14,53 +16,55 @@ exports.getAllTours = async (_req: Request, res: Response) => {
     const toursData = await tours.query;
 
     sendResponse(res, 200, toursData, toursData.length);
-  } catch (err) {
-    sendError(res, 404, err);
-  }
-};
+  },
+);
 
-exports.getTour = async (req: Request, res: Response) => {
-  try {
+exports.getTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const tour = await Tour.findById(req.params.id);
+    
+    if (!tour) {
+      return next(new AppError('No tour found with that ID', 404));
+    }
 
     sendResponse(res, 200, tour);
-  } catch (err) {
-    sendError(res, 404, err);
-  }
-};
+  },
+);
 
-exports.createTour = async (req: Request, res: Response) => {
-  try {
+exports.createTour = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
     const newTour = await Tour.create(req.body);
 
     sendResponse(res, 201, newTour);
-  } catch (err) {
-    sendError(res, 400, err);
-  }
-};
+  },
+);
 
-exports.updateTour = async (req: Request, res: Response) => {
-  try {
+exports.updateTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
     });
 
-    sendResponse(res, 200, tour);
-  } catch (err) {
-    sendError(res, 404, err);
-  }
-};
+    if (!tour) {
+      return next(new AppError('No tour found with that ID', 404));
+    }
 
-exports.deleteTour = async (req: Request, res: Response) => {
-  try {
-    await Tour.findByIdAndDelete(req.params.id);
+    sendResponse(res, 200, tour);
+  },
+);
+
+exports.deleteTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const deletedTour = await Tour.findByIdAndDelete(req.params.id);
+
+    if (!deletedTour) {
+      return next(new AppError('No tour found with that ID', 404));
+    }
 
     sendResponse(res, 204, null);
-  } catch (err) {
-    sendError(res, 404, err);
-  }
-};
+  },
+);
 
 exports.aliasTopTours = (req: Request, _res: Response, next: Function) => {
   req.query.limit = '5';
@@ -69,12 +73,12 @@ exports.aliasTopTours = (req: Request, _res: Response, next: Function) => {
   next();
 };
 
-exports.getTourStats = async (_req: Request, res: Response) => {
-  try {
+exports.getTourStats = catchAsync(
+  async (_req: Request, res: Response, _next: NextFunction) => {
     const stats = await Tour.aggregate([
       {
         // The $match stage filters the documents to only pass those with a ratingsAverage of 4.5
-        // or higher to the next stage in the pipeline. 
+        // or higher to the next stage in the pipeline.
         $match: { ratingsAverage: { $gte: 4.5 } },
       },
       {
@@ -98,13 +102,11 @@ exports.getTourStats = async (_req: Request, res: Response) => {
     ]);
 
     sendResponse(res, 200, stats);
-  } catch (err) {
-    sendError(res, 404, err);
-  }
-}
+  },
+);
 
-exports.getMonthlyPlan = async (_req: Request, res: Response) => {
-  try {
+exports.getMonthlyPlan = catchAsync(
+  async (_req: Request, res: Response, _next: NextFunction) => {
     const year = parseInt(_req.params.year);
 
     const plan = await Tour.aggregate([
@@ -155,7 +157,5 @@ exports.getMonthlyPlan = async (_req: Request, res: Response) => {
     ]);
 
     sendResponse(res, 200, plan);
-  } catch (err) {
-    sendError(res, 404, err);
-  }
-};
+  },
+);
