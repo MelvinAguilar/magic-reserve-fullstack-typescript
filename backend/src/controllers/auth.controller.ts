@@ -66,7 +66,7 @@ interface RequestWithUser extends Request {
     email: string;
     photo: string;
     role: string;
-  }
+  };
 }
 
 exports.authenticate = catchAsync(
@@ -138,13 +138,36 @@ exports.authorization = (...roles: string[]) => {
     // If the user is authenticated, check if they have the required role to access the protected route
     if (!roles.includes(req.user.role)) {
       return next(
-        new AppError(
-          'You do not have permission to perform this action.',
-          403,
-        ),
+        new AppError('You do not have permission to perform this action.', 403),
       );
     }
 
     next();
   };
-}
+};
+
+exports.forgotPassword = catchAsync(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    // Verify if a user exists with the provided email
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+      return next(
+        new AppError(
+          'The user associated with the provided email address does not exist.',
+          404,
+        ),
+      );
+    }
+
+    // Generate a random token
+    const resetToken = user.createPasswordResetToken();
+    // Disable all the validators before saving the user to the database
+    await user.save({ validateBeforeSave: false });
+
+    // Create the reset URL to be sent to the user via email
+    const resetURL = `${req.protocol}://${req.get(
+      'host',
+    )}/api/v1/users/reset-password/${resetToken}`;
+  },
+);
