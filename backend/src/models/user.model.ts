@@ -35,11 +35,18 @@ userSchema.pre('save', async function (next) {
   // If password was not modified, then continue
   if (!this.isModified('password')) return next();
 
-  // Hash password 
+  // Hash password
   this.password = await bcrypt.hash(this.password, 12);
 
   next();
 });
+
+userSchema.methods.correctPassword = async function (
+  candidatePassword: any,
+  userPassword: any,
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 
