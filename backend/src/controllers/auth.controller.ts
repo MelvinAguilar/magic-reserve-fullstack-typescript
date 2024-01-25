@@ -65,6 +65,7 @@ interface RequestWithUser extends Request {
     name: string;
     email: string;
     photo: string;
+    role: string;
   }
 }
 
@@ -121,3 +122,29 @@ exports.authenticate = catchAsync(
     next();
   },
 );
+
+exports.authorization = (...roles: string[]) => {
+  return (req: RequestWithUser, _res: Response, next: NextFunction) => {
+    // If the user is not authenticated, they will not be able to access the protected route
+    if (!req.user) {
+      return next(
+        new AppError(
+          'You are not authenticated! Please log in to gain access.',
+          401,
+        ),
+      );
+    }
+
+    // If the user is authenticated, check if they have the required role to access the protected route
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError(
+          'You do not have permission to perform this action.',
+          403,
+        ),
+      );
+    }
+
+    next();
+  };
+}

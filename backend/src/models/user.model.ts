@@ -6,6 +6,7 @@ interface IUser {
   name: string;
   email: string;
   photo: string;
+  role: string;
   password: string;
   passwordChangedAt: Date;
 }
@@ -23,6 +24,11 @@ const userSchema = new mongoose.Schema<IUser>({
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
   photo: String,
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'admin'],
+    default: 'user'
+  },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
