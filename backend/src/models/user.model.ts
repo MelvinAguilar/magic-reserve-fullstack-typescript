@@ -7,6 +7,7 @@ interface IUser {
   email: string;
   photo: string;
   password: string;
+  passwordChangedAt: Date;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -28,6 +29,7 @@ const userSchema = new mongoose.Schema<IUser>({
     minlength: 8,
     select: false,
   },
+  passwordChangedAt: Date,
 });
 
 // Encrypt password before saving to database
@@ -46,6 +48,20 @@ userSchema.methods.correctPassword = async function (
   userPassword: any,
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp: number) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(
+      (this.passwordChangedAt.getTime() / 1000).toString(),
+      10,
+    );
+
+    return JWTTimestamp < changedTimestamp;
+  }
+
+  // Return false if password was not changed
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);

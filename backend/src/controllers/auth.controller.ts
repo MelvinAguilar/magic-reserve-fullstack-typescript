@@ -1,3 +1,4 @@
+const { promisify } = require('util');
 import { NextFunction, Request, Response } from 'express';
 const jwt = require('jsonwebtoken');
 const User = require('./../models/user.model');
@@ -49,11 +50,74 @@ exports.login = catchAsync(
 
     // If the email and password are valid, generate and send a token to the client.
     // createSendToken(user, 200, res);
-    const token =  signToken(user._id);
+    const token = signToken(user._id);
 
     res.status(201).json({
       status: 'success',
       token,
     });
+  },
+);
+
+interface RequestWithUser extends Request {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    photo: string;
+  }
+}
+
+exports.authenticate = catchAsync(
+  async (req: RequestWithUser, _res: Response, next: NextFunction) => {
+    //  Retrieve the token and verify its presence
+    let authToken;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith('Bearer')
+    ) {
+      authToken = req.headers.authorization.split(' ')[1];
+    }
+
+    // If the token is not present, return an error
+    if (!authToken) {
+      return next(
+        new AppError(
+          'You are not authenticated! Please log in to gain access.',
+          401,
+        ),
+      );
+    }
+
+    // Validate the token
+    const decodedToken = await promisify(jwt.verify)(
+      authToken,
+      process.env.JWT_SECRET as string,
+    );
+
+    //  Verify if the user associated with the token still exists in the database
+    const existingUser = await User.findById(decodedToken.id);
+    if (!existingUser) {
+      return next(
+        new AppError(
+          'The user associated with the provided token no longer exists.',
+          401,
+        ),
+      );
+    }
+
+    // Verify if the user has changed their password after the token was issued
+    if (existingUser.changedPasswordAfter(decodedToken.iat)) {
+      return next(
+        new AppError(
+          'The password has been changed since the token was issued. Please log in again.',
+          401,
+        ),
+      );
+    }
+
+    // If all the checks pass, grant access to the protected route
+    req.user = existingUser;
+    next();
   },
 );
