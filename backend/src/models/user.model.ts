@@ -30,11 +30,12 @@ const userSchema = new mongoose.Schema<IUser>({
   },
 });
 
+// Encrypt password before saving to database
 userSchema.pre('save', async function (next) {
   // If password was not modified, then continue
   if (!this.isModified('password')) return next();
 
-  // Hash password with cost of 12
+  // Hash password 
   this.password = await bcrypt.hash(this.password, 12);
 
   next();
