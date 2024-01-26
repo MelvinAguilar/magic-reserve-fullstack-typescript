@@ -10,8 +10,8 @@ interface IUser {
   role: string;
   password: string;
   passwordChangedAt: Date;
-  passwordResetToken: string;
-  passwordResetExpires: Date;
+  passwordResetToken: string | undefined;
+  passwordResetExpires: Date | undefined;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
