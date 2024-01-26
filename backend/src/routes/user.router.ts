@@ -21,6 +21,11 @@ router.patch(
   authController.updateMe,
 );
 
+router.delete(
+  '/delete-me',
+  authController.authenticate,
+  authController.deleteMe,
+);
 
 router.route('/').get(authController.getAllUsers);
 

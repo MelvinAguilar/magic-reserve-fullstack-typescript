@@ -4,7 +4,7 @@ const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 
 exports.getAllUsers = catchAsync(
-  async (req: Request, res: Response, _next: NextFunction) => {
+  async (_req: Request, res: Response, _next: NextFunction) => {
     const users = await User.find();
 
     res.status(200).json({
@@ -78,6 +78,18 @@ exports.updateMe = catchAsync(
   },
 );
 
+exports.deleteMe = catchAsync(
+  catchAsync(
+    async (req: RequestWithUser, res: Response, _next: NextFunction) => {
+      await User.findByIdAndUpdate(req.user.id, { active: false });
+
+      res.status(204).json({
+        status: 'success',
+        data: null,
+      });
+    },
+  ),
+);
 
 // Filter out unwanted fields names that are not allowed to be updated
 const filterObj = (obj: any, ...allowedFields: string[]) => {

@@ -1,7 +1,7 @@
 const validator = require('validator');
-import mongoose from 'mongoose';
 const bcrypt = require('bcryptjs');
 import crypto from 'crypto';
+import mongoose, { Model } from 'mongoose';
 
 interface IUser {
   name: string;
@@ -12,6 +12,7 @@ interface IUser {
   passwordChangedAt: Date;
   passwordResetToken: string | undefined;
   passwordResetExpires: Date | undefined;
+  active: boolean;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -41,6 +42,11 @@ const userSchema = new mongoose.Schema<IUser>({
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
 });
 
 /*
@@ -53,6 +59,28 @@ userSchema.pre('save', async function (next) {
   // Hash password
   this.password = await bcrypt.hash(this.password, 12);
 
+  next();
+});
+
+/*
+ * Middleware to hide the passwordChangedAt property when the user is returned.
+ */
+userSchema.pre('save', async function (next) {
+  // If the password was not modified or the document is new, then continue
+  if (!this.isModified('password') || this.isNew) return next();
+
+  // Set the passwordChangedAt property to the current time minus 1 second
+  this.passwordChangedAt = new Date(Date.now() - 1000);
+
+  next();
+});
+
+/*
+ * Middleware to filter out inactive users.
+ */
+userSchema.pre(/^find/, function (this: Model<IUser>, next) {
+  // this points to the current query
+  this.find({ active: { $ne: false } });
   next();
 });
 
@@ -102,19 +130,6 @@ userSchema.methods.createPasswordResetToken = function () {
   // Return the unencrypted token
   return resetToken;
 };
-
-/*
- * Middleware to hide the passwordChangedAt property when the user is returned.
- */
-userSchema.pre('save', async function (next) {
-  // If the password was not modified or the document is new, then continue
-  if (!this.isModified('password') || this.isNew) return next();
-
-  // Set the passwordChangedAt property to the current time minus 1 second
-  this.passwordChangedAt = new Date(Date.now() - 1000);
-
-  next();
-});
 
 const User = mongoose.model('User', userSchema);
 
