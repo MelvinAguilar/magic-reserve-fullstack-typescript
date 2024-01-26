@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 const AppError = require('./../utils/appError');
-const User = require('./../models/userModel');
+const User = require('./../models/user.model');
 const catchAsync = require('./../utils/catchAsync');
 
 exports.getAllUsers = catchAsync(
