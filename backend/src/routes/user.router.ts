@@ -15,4 +15,15 @@ router.patch(
   authController.updatePassword,
 );
 
+router.patch(
+  '/update-me',
+  authController.authenticate,
+  authController.updateMe,
+);
+
+
+router.route('/').get(authController.getAllUsers);
+
+router.route('/:id').get(authController.getUser);
+
 module.exports = router;
