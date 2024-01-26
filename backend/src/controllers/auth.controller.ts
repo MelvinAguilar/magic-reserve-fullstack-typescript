@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const { promisify } = require('util');
 import { NextFunction, Request, Response } from 'express';
 const jwt = require('jsonwebtoken');
@@ -13,24 +14,28 @@ const signToken = (id: string) => {
   });
 };
 
+const createSendToken = (user: any, statusCode: number, res: Response) => {
+  const token = signToken(user._id);
+
+  // Send the response to the client
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 exports.signup = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const newUser = await User.create({
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm,
     });
 
-    const token = signToken(newUser._id);
-
-    res.status(201).json({
-      status: 'success',
-      token,
-      data: {
-        newUser,
-      },
-    });
+    createSendToken(newUser, 201, res);
   },
 );
 
@@ -51,13 +56,7 @@ exports.login = catchAsync(
     }
 
     // If the email and password are valid, generate and send a token to the client.
-    // createSendToken(user, 200, res);
-    const token = signToken(user._id);
-
-    res.status(201).json({
-      status: 'success',
-      token,
-    });
+    createSendToken(user, 200, res);
   },
 );
 
@@ -204,7 +203,56 @@ exports.forgotPassword = catchAsync(
 );
 
 exports.resetPassword = catchAsync(
-  async (_req: RequestWithUser, _res: Response, _next: NextFunction) => {
-    //TODO
-  }
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    // Verify if a user exists with the provided token
+    const hashedToken = crypto
+      .createHash('sha256')
+      .update(req.params.token)
+      .digest('hex');
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(
+        new AppError(
+          'The user associated with the provided token does not exist.',
+          404,
+        ),
+      );
+    }
+
+    // Update the user's password
+    user.password = req.body.password;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+
+    createSendToken(user, 200, res);
+  },
+);
+
+exports.updatePassword = catchAsync(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    // Verify if a user exists with the provided email and if the provided password is correct.
+    const user = await User.findById(req.user.id).select('+password');
+
+    // Check if the provided current password is correct
+    if (
+      !user ||
+      !(await user.correctPassword(req.body.passwordCurrent, user.password))
+    ) {
+      return next(new AppError('Invalid email or password', 401));
+    }
+
+    // Update the user's password
+    user.password = req.body.password;
+
+    await user.save();
+
+    createSendToken(user, 200, res);
+  },
 );

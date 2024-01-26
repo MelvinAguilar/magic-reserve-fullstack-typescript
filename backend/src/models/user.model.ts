@@ -103,6 +103,19 @@ userSchema.methods.createPasswordResetToken = function () {
   return resetToken;
 };
 
+/*
+ * Middleware to hide the passwordChangedAt property when the user is returned.
+ */
+userSchema.pre('save', async function (next) {
+  // If the password was not modified or the document is new, then continue
+  if (!this.isModified('password') || this.isNew) return next();
+
+  // Set the passwordChangedAt property to the current time minus 1 second
+  this.passwordChangedAt = new Date(Date.now() - 1000);
+
+  next();
+});
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;
