@@ -18,6 +18,20 @@ interface ITour {
   createdAt: Date;
   startDates: Date[];
   secretTour: boolean;
+  startLocation: {
+    type: string;
+    coordinates: number[];
+    address: string;
+    description: string;
+  };
+  locations: {
+    type: string;
+    coordinates: number[];
+    address: string;
+    description: string;
+    day: number;
+  }[];
+  guides: mongoose.Schema.Types.ObjectId[];
 }
 
 // Define the tour schema
@@ -111,6 +125,40 @@ const tourSchema = new mongoose.Schema<ITour>(
       type: Boolean,
       default: false,
     },
+    // Start location for the tour
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'] // Only 'Point' is supported
+      },
+      coordinates: [Number], // Longitude (E/W), Latitude (N/S)
+      address: String, // Address of the location
+      description: String // Description of the location
+    },
+    // Locations covered by the tour
+    locations: [
+      {
+        // GeoJSON
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'] // Only 'Point' is supported
+        },
+        coordinates: [Number], // Longitude (E/W), Latitude (N/S)
+        address: String, // Address of the location
+        description: String, // Description of the location
+        day: Number // Day on which the location is visited
+      }
+    ],
+    // Guides for the tour
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+      }
+    ]
   },
   {
     // Set options for toJSON and toObject
@@ -140,6 +188,16 @@ tourSchema.pre(/^find/, function(next) {
 // This middleware is used to calculate the time taken for the query to execute
 tourSchema.post(/^find/, function(_docs, next) {
   console.log(`Query took ${Date.now() - (this as any).start} milliseconds!`);
+  next();
+});
+
+// This middleware is used to populate the tour with the guides
+tourSchema.pre(/^find/, function(next) {
+  (this as Query<any, any>).populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+
   next();
 });
 
