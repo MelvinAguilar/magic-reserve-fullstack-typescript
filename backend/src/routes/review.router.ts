@@ -1,5 +1,5 @@
 import express from 'express';
-const router = express.Router();
+const router = express.Router({ mergeParams: true });
 
 const reviewController = require('../controllers/review.controller');
 const authController = require('../controllers/auth.controller');
@@ -10,7 +10,6 @@ router
   .post(
     authController.authenticate,
     authController.authorization('user', 'admin'),
-    reviewController.setTourUserIds,
     reviewController.createReview,
   );
 

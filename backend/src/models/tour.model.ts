@@ -167,8 +167,16 @@ const tourSchema = new mongoose.Schema<ITour>(
   },
 );
 
+// Virtual property to calculate the duration in weeks without storing it in the database
 tourSchema.virtual('durationWeeks').get(function() {
   return this.duration / 7;
+});
+
+// Virtual populate the tour with the reviews to avoid embedding the reviews in the tour
+tourSchema.virtual('reviews', {
+  ref: 'Review',  // Name of the model to link to
+  foreignField: 'tour', // Name of the field in the Review model
+  localField: '_id' // Name of the field in the Tour model
 });
 
 // This middleware is used to create a slug for the tour when it is saved 

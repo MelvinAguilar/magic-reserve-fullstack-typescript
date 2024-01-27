@@ -1,5 +1,4 @@
-import mongoose from 'mongoose';
-const Tour = require('./tour.model');
+import mongoose, { Query } from 'mongoose';
 
 interface IReview {
   review: string;
@@ -37,6 +36,15 @@ const reviewSchema = new mongoose.Schema<IReview>(
     toObject: { virtuals: true },
   },
 );
+
+reviewSchema.pre(/^find/, function (next) {
+  (this as Query<any, any>).populate({
+    path: 'user',
+    select: 'name photo',
+  });
+
+  next();
+});
 
 const Review = mongoose.model('Review', reviewSchema);
 
