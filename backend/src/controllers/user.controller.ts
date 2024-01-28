@@ -2,37 +2,12 @@ import { NextFunction, Request, Response } from 'express';
 const AppError = require('./../utils/appError');
 const User = require('./../models/user.model');
 const catchAsync = require('./../utils/catchAsync');
+const factory = require('./handler.factory');
 
-exports.getAllUsers = catchAsync(
-  async (_req: Request, res: Response, _next: NextFunction) => {
-    const users = await User.find();
-
-    res.status(200).json({
-      status: 'success',
-      results: users.length,
-      data: {
-        users,
-      },
-    });
-  },
-);
-
-exports.getUser = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const user = await User.findById(req.params.id);
-
-    if (!user) {
-      return next(new AppError('No user found with that ID', 404));
-    }
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        user,
-      },
-    });
-  },
-);
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+exports.updateUser = factory.updateOne(User);
+exports.deleteUser = factory.deleteOne(User);
 
 interface RequestWithUser extends Request {
   user: {
@@ -100,3 +75,4 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
 
   return newObj;
 };
+

@@ -1,70 +1,14 @@
 const Tour = require('../models/tour.model');
 import { sendResponse } from './../utils/apiResponse';
 import { NextFunction, Request, Response } from 'express';
-const APIFeatures = require('./../utils/apiFeatures');
 const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
+const factory = require('./handler.factory');
 
-exports.getAllTours = catchAsync(
-  async (_req: Request, res: Response, _next: NextFunction) => {
-    const tours = new APIFeatures(Tour.find(), _req.query)
-      .filter()
-      .sort()
-      .limitFields()
-      .paginate();
-
-    const toursData = await tours.query;
-
-    sendResponse(res, 200, toursData, toursData.length);
-  },
-);
-
-exports.getTour = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const tour = await Tour.findById(req.params.id).populate('reviews');
-    
-    if (!tour) {
-      return next(new AppError('No tour found with that ID', 404));
-    }
-
-    sendResponse(res, 200, tour);
-  },
-);
-
-exports.createTour = catchAsync(
-  async (req: Request, res: Response, _next: NextFunction) => {
-    const newTour = await Tour.create(req.body);
-
-    sendResponse(res, 201, newTour);
-  },
-);
-
-exports.updateTour = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-
-    if (!tour) {
-      return next(new AppError('No tour found with that ID', 404));
-    }
-
-    sendResponse(res, 200, tour);
-  },
-);
-
-exports.deleteTour = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
-    const deletedTour = await Tour.findByIdAndDelete(req.params.id);
-
-    if (!deletedTour) {
-      return next(new AppError('No tour found with that ID', 404));
-    }
-
-    sendResponse(res, 204, null);
-  },
-);
+exports.getAllTours = factory.getAll(Tour);
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
+exports.createTour = factory.createOne(Tour);
+exports.updateTour = factory.updateOne(Tour);
+exports.deleteTour = factory.deleteOne(Tour);
 
 exports.aliasTopTours = (req: Request, _res: Response, next: Function) => {
   req.query.limit = '5';
