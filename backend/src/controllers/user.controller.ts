@@ -6,6 +6,7 @@ const factory = require('./handler.factory');
 
 exports.getAllUsers = factory.getAll(User);
 exports.getUser = factory.getOne(User);
+exports.createUser = factory.createOne(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
 
@@ -17,6 +18,12 @@ interface RequestWithUser extends Request {
     photo: string;
     role: string;
   };
+}
+
+exports.getMe = (req: RequestWithUser, _res: Response, next: NextFunction) => {
+  req.params.id = req.user.id;
+
+  next();
 }
 
 exports.updateMe = catchAsync(

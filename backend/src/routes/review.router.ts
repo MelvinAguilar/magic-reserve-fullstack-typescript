@@ -4,6 +4,9 @@ const router = express.Router({ mergeParams: true });
 const reviewController = require('../controllers/review.controller');
 const authController = require('../controllers/auth.controller');
 
+// Protect all routes after this middleware to require authentication
+router.use(authController.authenticate);
+
 router
   .route('/')
   .get(reviewController.getAllReviews)
@@ -17,7 +20,13 @@ router
 router
   .route('/:id')
   .get(reviewController.getReview)
-  .patch(reviewController.updateReview)
-  .delete(reviewController.deleteReview);
+  .patch(
+    authController.authorization('user', 'admin'),
+    reviewController.updateReview,
+  )
+  .delete(
+    authController.authorization('user', 'admin'),
+    reviewController.deleteReview,
+  );
 
 module.exports = router;
