@@ -73,6 +73,7 @@ const tourSchema = new mongoose.Schema<ITour>(
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be below 5.0'],
+      set: (val: number) => Math.round(val * 10) / 10, // Round the value to 1 decimal place
     },
     // Number of ratings for the tour
     ratingsQuantity: {
@@ -88,11 +89,11 @@ const tourSchema = new mongoose.Schema<ITour>(
     priceDiscount: {
       type: Number,
       validate: {
-        validator: function(this: any, val: number) {
+        validator: function (this: any, val: number) {
           return val < this.price;
         },
-        message: 'Discount price ({VALUE}) should be below regular price'
-      }
+        message: 'Discount price ({VALUE}) should be below regular price',
+      },
     },
     // Brief summary of the tour
     summary: {
@@ -131,11 +132,11 @@ const tourSchema = new mongoose.Schema<ITour>(
       type: {
         type: String,
         default: 'Point',
-        enum: ['Point'] // Only 'Point' is supported
+        enum: ['Point'], // Only 'Point' is supported
       },
       coordinates: [Number], // Longitude (E/W), Latitude (N/S)
       address: String, // Address of the location
-      description: String // Description of the location
+      description: String, // Description of the location
     },
     // Locations covered by the tour
     locations: [
@@ -144,21 +145,21 @@ const tourSchema = new mongoose.Schema<ITour>(
         type: {
           type: String,
           default: 'Point',
-          enum: ['Point'] // Only 'Point' is supported
+          enum: ['Point'], // Only 'Point' is supported
         },
         coordinates: [Number], // Longitude (E/W), Latitude (N/S)
         address: String, // Address of the location
         description: String, // Description of the location
-        day: Number // Day on which the location is visited
-      }
+        day: Number, // Day on which the location is visited
+      },
     ],
     // Guides for the tour
     guides: [
       {
         type: mongoose.Schema.ObjectId,
-        ref: 'User'
-      }
-    ]
+        ref: 'User',
+      },
+    ],
   },
   {
     // Set options for toJSON and toObject
@@ -167,26 +168,31 @@ const tourSchema = new mongoose.Schema<ITour>(
   },
 );
 
+// Indexes for the tour schema to improve the performance of frequently used queries but at the cost of slower writes
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
+
 // Virtual property to calculate the duration in weeks without storing it in the database
-tourSchema.virtual('durationWeeks').get(function() {
+tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
 // Virtual populate the tour with the reviews to avoid embedding the reviews in the tour
 tourSchema.virtual('reviews', {
-  ref: 'Review',  // Name of the model to link to
+  ref: 'Review', // Name of the model to link to
   foreignField: 'tour', // Name of the field in the Review model
-  localField: '_id' // Name of the field in the Tour model
+  localField: '_id', // Name of the field in the Tour model
 });
 
-// This middleware is used to create a slug for the tour when it is saved 
-tourSchema.pre('save', function(next) {
+// This middleware is used to create a slug for the tour when it is saved
+tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
 // This middleware is used to hide secret tours from the query results (find
-tourSchema.pre(/^find/, function(next) {
+tourSchema.pre(/^find/, function (next) {
   (this as Query<any, any>).find({ secretTour: { $ne: true } });
 
   (this as any).start = Date.now();
@@ -194,13 +200,13 @@ tourSchema.pre(/^find/, function(next) {
 });
 
 // This middleware is used to calculate the time taken for the query to execute
-tourSchema.post(/^find/, function(_docs, next) {
+tourSchema.post(/^find/, function (_docs, next) {
   console.log(`Query took ${Date.now() - (this as any).start} milliseconds!`);
   next();
 });
 
 // This middleware is used to populate the tour with the guides
-tourSchema.pre(/^find/, function(next) {
+tourSchema.pre(/^find/, function (next) {
   (this as Query<any, any>).populate({
     path: 'guides',
     select: '-__v -passwordChangedAt',
@@ -210,7 +216,7 @@ tourSchema.pre(/^find/, function(next) {
 });
 
 // This middleware is used to populate the tour with the guides
-tourSchema.pre('aggregate', function(next) {
+tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
 
   console.log(this.pipeline());
