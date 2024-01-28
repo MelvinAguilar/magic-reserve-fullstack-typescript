@@ -103,3 +103,78 @@ exports.getMonthlyPlan = catchAsync(
     sendResponse(res, 200, plan);
   },
 );
+
+exports.getToursWithin = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    // The distance and unit parameters are specified in the format distance/unit.
+    const { distance, latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+
+    // The radius of the earth is 3963.2 miles or 6378.1 kilometers.
+    const radius = unit === 'mi' ? parseFloat(distance) / 3963.2 : parseFloat(distance) / 6378.1;
+
+    // If no latitude or longitude is provided, the API will return an error.
+    if (!lat || !lng) {
+      throw new Error(
+        'Please provide latitude and longitude in the format lat,lng.',
+      );
+    }
+
+    // The $geoWithin operator selects documents with geospatial data that exists entirely
+    // within a specified shape. The query returns documents that are within the specified
+    // circle, where the center is defined by the point and the distance by the radius.
+    const tours = await Tour.find({
+      startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+    });
+
+    sendResponse(res, 200, tours, tours.length);
+  },
+);
+
+exports.getDistances = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    // latitudes and longitudes are specified in the format lat,lng.
+    const { latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+
+    // If no latitude or longitude is provided, the API will return an error.
+    if (!lat || !lng) {
+      throw new Error(
+        'Please provide latitude and longitude in the format lat,lng.',
+      );
+    }
+
+    // The distanceMultiplier field specifies the factor to multiply all distances
+    const multiplier = unit === 'mi' ? 0.000621371 : 0.001;
+
+    // The $geoNear stage outputs documents in order of nearest to farthest from a specified
+    // point. To use $geoNear, it must be the first stage in the pipeline.
+    const distances = await Tour.aggregate([
+      {
+        $geoNear: {
+          // The near field specifies the point for which to find the closest documents.
+          near: {
+            type: 'Point',
+            coordinates: [parseFloat(lng), parseFloat(lat)],
+          },
+          // The distanceField field specifies the output field that contains the calculated
+          // distance. The distance is returned in meters by default.
+          distanceField: 'distance',
+          // The distanceMultiplier field specifies the factor to multiply all distances
+          // returned by the query.
+          distanceMultiplier: multiplier,
+        },
+      },
+      {
+        // The $project stage reshapes each document in the pipeline by including, excluding,
+        // or renaming fields.
+        $project: {
+          distance: 1,
+          name: 1,
+        },
+      },
+    ]);
+
+    sendResponse(res, 200, distances);
+  },
+);
