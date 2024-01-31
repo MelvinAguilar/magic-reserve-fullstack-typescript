@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <main className="">
+    <main id="main">
       <Container as="section" className="grid">
         <div className="column-1 grid min-h-screen items-center">
           <h1 className="font-title font-poly leading-none">
