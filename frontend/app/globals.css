@@ -37,11 +37,11 @@
 
   .title {
     text-transform: uppercase;
-  white-space: nowrap;
-  mix-blend-mode: exclusion;
-  font-size: 25.889vw;
-  font-weight: 900;
-  color: white;
+    white-space: nowrap;
+    mix-blend-mode: exclusion;
+    font-size: 25.889vw;
+    font-weight: 900;
+    color: white;
   }
 }
 
@@ -49,9 +49,11 @@
   html {
     height: 100%;
   }
+
   body {
     min-height: 100%;
     background-color: #000;
     font-family: var(--font-mona-sans);
+    @apply text-lg;
   }
 }

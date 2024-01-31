@@ -1,4 +1,5 @@
 import { Container } from "@/components/Container";
+import { TestimonialContainer } from "@/components/Home/Testimonial";
 import Image from "next/image";
 
 export default function Home() {
@@ -15,12 +16,12 @@ export default function Home() {
           alt=""
           width={1920}
           height={1080}
-          className="column-2 w-[45vw] opacity-85 object-cover object-center h-[92vh]"
+          className="column-2 h-[92vh] w-[45vw] object-cover object-center opacity-85"
         />
       </Container>
 
-      <Container as="section" className="!py-16 grid">
-        <div className="gap-16 items-center lg:grid lg:grid-cols-2">
+      <Container as="section" className="grid !py-16">
+        <div className="items-center gap-16 lg:grid lg:grid-cols-2">
           <div className="grid grid-cols-2 gap-4">
             <Image
               className="w-full rounded-lg"
@@ -30,7 +31,7 @@ export default function Home() {
               height={500}
             />
             <Image
-              className="mt-4 w-full lg:mt-10 rounded-lg"
+              className="mt-4 w-full rounded-lg lg:mt-10"
               src="https://i.imgur.com/X6NhvOq.jpg"
               alt=""
               width={500}
@@ -38,7 +39,7 @@ export default function Home() {
             />
           </div>
           <div>
-            <h2 className="mb-4 tracking-tight text-3xl font-poly font-extrabold">
+            <h2 className="font-poly mb-4 text-3xl font-extrabold tracking-tight">
               Elevate Your Journey with Us
             </h2>
             <p className="mb-4">
@@ -56,16 +57,18 @@ export default function Home() {
         </div>
       </Container>
 
-      <div className=" relative min-h-screen grid place-content-center">
-        <h2 className="font-poly leading-none z-10 title">Tours</h2>
+      <div className=" relative grid min-h-screen place-content-center">
+        <h2 className="font-poly title z-10 leading-none">Tours</h2>
         <Image
           src="https://i.imgur.com/KbWVnGv.jpg"
           alt=""
           width={1920}
           height={1080}
-          className="absolute inset-0 w-full h-full object-cover object-center -z-10"
+          className="absolute inset-0 -z-10 size-full object-cover object-center"
         />
       </div>
+
+      <TestimonialContainer />
     </main>
   );
 }

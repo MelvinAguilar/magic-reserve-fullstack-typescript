@@ -14,7 +14,7 @@ export function Container<T extends React.ElementType = "div">({
 
   return (
     <Component
-      className={`w-full mx-auto max-w-7xl px-4 md:p-6 lg:px-8 ${className}`}
+      className={`mx-auto w-full max-w-7xl px-4 md:p-6 lg:px-8 ${className}`}
     >
       {children}
     </Component>
