@@ -1,4 +1,5 @@
-import mongoose, { Query } from 'mongoose';
+import mongoose, { Query, Model } from 'mongoose';
+
 const Tour = require('./tour.model');
 
 interface IReview {
@@ -7,9 +8,11 @@ interface IReview {
   createdAt: Date;
   tour: mongoose.Schema.Types.ObjectId;
   user: mongoose.Schema.Types.ObjectId;
+  r?: IReview | null;
+  calcAverageRatings: (tourId: string) => Promise<void>;
 }
 
-const reviewSchema = new mongoose.Schema<IReview>(
+const reviewSchema = new mongoose.Schema<IReview, Model<IReview>>(
   {
     review: {
       type: String,
@@ -53,13 +56,13 @@ reviewSchema.pre(/^find/, function (next) {
 
 // Static method to calculate the average rating and quantity of ratings for a tour
 reviewSchema.statics.calcAverageRatings = async function (tourId: string) {
-  const stats = await (this as mongoose.Model<IReview>).aggregate([
+  const stats = await this.aggregate([
     {
       // filter by tour
-      $match: { tour: tourId },
+      $match: { tour: new mongoose.Types.ObjectId(tourId) },
     },
     {
-      // group by tour and calculate the average 
+      // group by tour and calculate the average
       $group: {
         _id: '$tour', // group by tour
         nRating: { $sum: 1 }, // count the number of ratings
@@ -77,31 +80,27 @@ reviewSchema.statics.calcAverageRatings = async function (tourId: string) {
     });
   } else {
     await Tour.findByIdAndUpdate(tourId, {
-      ratingsAverage: 4.5,
+      ratingsAverage: 0,
       ratingsQuantity: 0,
     });
   }
-}
+};
 
-// Middleware to calculate the average rating and quantity of ratings for a tour after a review is created  
-reviewSchema.post('save', function () {
-  // @ts-ignore
-  (this.constructor as mongoose.Model<IReview>).calcAverageRatings(this.tour);
+// Middleware to calculate the average rating and quantity of ratings for a tour after a review is created
+reviewSchema.post('save', async function () {
+  await (this.constructor as unknown as IReview).calcAverageRatings(
+    this.tour.toString(),
+  );
 });
 
-// Middleware to calculate the average rating and quantity of ratings for a tour after a review is updated or deleted
-reviewSchema.pre(/^findOneAnd/, async function (next) {
-  // @ts-ignore
-  this.r = await this.findOne();
-  next();
+reviewSchema.post(/^findOneAnd/, async function (doc) {
+  const currentDoc = await (this.model as any).findOne();
+
+  if (currentDoc) {
+    await currentDoc.constructor.calcAverageRatings(doc.tour);
+  }
 });
 
-// Middleware to calculate the average rating and quantity of ratings for a tour after a review is updated or deleted
-reviewSchema.post(/^findOneAnd/, async function () {
-  // @ts-ignore
-  await this.r.constructor.calcAverageRatings(this.r.tour);
-});
-
-const Review = mongoose.model('Review', reviewSchema);
+const Review = mongoose.model<IReview>('Review', reviewSchema);
 
 module.exports = Review;

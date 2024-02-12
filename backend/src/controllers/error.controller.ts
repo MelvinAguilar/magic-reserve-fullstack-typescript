@@ -17,9 +17,14 @@ const handleIdErrorDB = (err: any) => {
 
 // Handling duplicate database fields
 const handleDuplicateFieldsDB = (err: any) => {
-  const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
+  const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
 
-  const message = `Duplicate field value: ${value}. Please use another value!`;
+  let message = `Duplicate field value: ${value}. Please use another value!`;
+
+  if (err.message.includes('.reviews index')) {
+    message = `Duplicate review for this user and tour! You can only review a tour once.`;
+  }
+
   return new AppError(message, 400);
 };
 
@@ -92,9 +97,8 @@ module.exports = (
     if (error?.name === 'ValidationError')
       // validation errors of database fields
       error = handleValidationErrorDB(error);
-      if (error.name === 'JsonWebTokenError') error = handleJWTError(); // invalid JWT token
+    if (error.name === 'JsonWebTokenError') error = handleJWTError(); // invalid JWT token
     if (error.name === 'TokenExpiredError') error = handleJWTExpiredError(); // expired JWT token
-
 
     sendErrorProd(error, res);
   }

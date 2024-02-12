@@ -20,7 +20,7 @@ exports.deleteOne = (Model: any) =>
       );
     }
 
-    sendResponse(res, 204, null);
+    sendResponse(res, 200, []);
   });
 
 /*

@@ -12,6 +12,17 @@ class APIFeatures {
     const excludedFields = ['page', 'sort', 'limit', 'fields'];
     excludedFields.forEach((el) => delete queryObj[el]);
 
+    // Convert the query object to a string and replace the operators
+    for (const key in queryObj) {
+      if (typeof queryObj[key] === 'string') {
+        if (!isNaN(queryObj[key])) {
+          queryObj[key] = parseFloat(queryObj[key]);
+        } else {
+          queryObj[key] = { $regex: queryObj[key], $options: 'i' };
+        }
+      }
+    }
+
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 

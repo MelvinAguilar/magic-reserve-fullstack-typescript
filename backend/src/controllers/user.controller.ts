@@ -24,7 +24,7 @@ exports.getMe = (req: RequestWithUser, _res: Response, next: NextFunction) => {
   req.params.id = req.user.id;
 
   next();
-}
+};
 
 exports.updateMe = catchAsync(
   async (req: RequestWithUser, res: Response, next: NextFunction) => {
@@ -39,7 +39,7 @@ exports.updateMe = catchAsync(
     }
 
     // Filter out fields that should not be updated
-    const filteredBody = filterObj(req.body, 'name', 'email');
+    const filteredBody = filterObj(req.body, 'name', 'email', 'photo');
 
     // Update the user document in the database
     const updatedUser = await User.findByIdAndUpdate(
@@ -82,4 +82,3 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
 
   return newObj;
 };
-
