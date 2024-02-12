@@ -1,8 +1,11 @@
 import { Container } from "@/components/Container";
-import { TestimonialContainer } from "@/components/Home/Testimonial";
+import { TestimonialContainer } from "@/components/home/Testimonial";
+import ToursShowcase from "@/components/home/ToursShowcase";
 import Image from "next/image";
 
-export default function Home() {
+export default async function Home() {
+  let tours = await fetch("/api/tours/get").then((res) => res.json());
+
   return (
     <main id="main">
       <Container as="section" className="grid">
@@ -56,6 +59,8 @@ export default function Home() {
           </div>
         </div>
       </Container>
+      
+      <ToursShowcase tours={tours} />
 
       <div className=" relative grid min-h-screen place-content-center">
         <h2 className="font-poly title z-10 leading-none">Tours</h2>
