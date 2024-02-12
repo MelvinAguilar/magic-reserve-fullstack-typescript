@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { StarFilledIcon } from "../SocialIcons";
+import { StarFilledIcon } from "../Icons";
 import { Container } from "../Container";
 
 interface TestimonialProps {

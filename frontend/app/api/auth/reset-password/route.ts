@@ -1,11 +1,13 @@
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request, _res: NextResponse) {
+export async function PATCH(req: Request, _res: NextResponse) {
   const data = await req.json();
-  const url = process.env.NEXT_PUBLIC_API_URL + "/users/login";
+
+  const url =
+    process.env.NEXT_PUBLIC_API_URL + "/users/reset-password/" + data.token;
 
   const response = await fetch(url, {
-    method: "POST",
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
