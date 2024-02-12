@@ -10,6 +10,7 @@ interface InputProps {
   className?: string;
   ariaLabel?: string;
   errors: FieldError | undefined;
+  defaultValue?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -21,6 +22,7 @@ const Input: React.FC<InputProps> = ({
   className = "",
   ariaLabel = undefined,
   errors,
+  defaultValue,
 }) => {
   const ariaInvalid = errors ? "true" : "false";
   const additionalProps = ariaLabel ? { "aria-label": ariaLabel } : {};
@@ -39,14 +41,15 @@ const Input: React.FC<InputProps> = ({
         aria-label={ariaLabel}
         aria-invalid={ariaInvalid}
         aria-describedby={`${name}-error`}
-        className={`mt-8 w-full rounded-xl border border-zinc-400 bg-transparent px-5 py-3 ${className}`}
+        className={`mt-8 w-full rounded-lg border border-primary-light bg-light px-3 py-4 ${className}`}
+        defaultValue={defaultValue}
       />
       <div aria-live="polite" aria-atomic="true">
         {errors && errors.message && (
           <p
             id={`${name}-error`}
             role="alert"
-            className="mx-5 mt-2 text-sm text-red-300"
+            className="mx-5 mt-2 text-sm font-semibold text-red-500"
           >
             {errors.message || ""}
           </p>
