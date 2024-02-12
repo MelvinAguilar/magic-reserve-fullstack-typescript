@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import localFont from "next/font/local";
+import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "sonner";
 
 const polySans = localFont({
   src: "../public/fonts/PolySans-Slim.woff2",
@@ -44,7 +46,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${monaSans.variable} ${polySans.variable}`}>
-        {children}
+      <AuthProvider>{children}</AuthProvider>
+        <Toaster richColors />
       </body>
     </html>
   );

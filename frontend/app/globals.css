@@ -28,11 +28,13 @@
     top: 0%;
     right: auto;
     bottom: auto;
-    z-index: 5;
     overflow: auto;
+    z-index: 5;
     width: 100%;
     height: 100%;
     border-radius: 1em;
+    display: flex;
+    flex-direction: column;
   }
 
   .title {
@@ -42,6 +44,10 @@
     font-size: 25.889vw;
     font-weight: 900;
     color: white;
+  }
+
+  .blend-exclusion {
+    mix-blend-mode: exclusion;
   }
 }
 
@@ -55,5 +61,30 @@
     background-color: #000;
     font-family: var(--font-mona-sans);
     @apply text-lg;
+  }
+
+
+  .card-hovered .card-item {
+    @apply opacity-100;
+  }
+
+  .card-hovered .card-title {
+    @apply opacity-80;
+  }
+
+  .card-hovered {
+    background: linear-gradient(rgba(0, 0, 0, 0) 47.92%, rgb(0, 0, 0) 100%);
+  }
+
+  .card-title {
+    @apply transition-card opacity-0;
+  }
+
+  .card-item {
+    @apply transition-card opacity-0;
+  }
+
+  .transition-card {
+    transition: opacity 0.3s ease;
   }
 }
