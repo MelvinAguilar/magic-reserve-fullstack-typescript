@@ -132,7 +132,7 @@ export const SearchIcon = (props: React.SVGProps<SVGSVGElement>) => (
     width="18"
     height="18"
     viewBox="0 0 18 18"
-    fill="none"
+    fill="currentColor"
     xmlns="http://www.w3.org/2000/svg"
     aria-hidden="true"
     {...props}
@@ -152,7 +152,7 @@ export const SearchIcon = (props: React.SVGProps<SVGSVGElement>) => (
 export const ShoppingBagIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
-      fill="none"
+      fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -172,7 +172,7 @@ export const ShoppingBagIcon = (props: React.SVGProps<SVGSVGElement>) => {
 export const TrashIcon = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
-      fill="none"
+      fill="currentColor"
       xmlns="http://www.w3.org/2000/svg"
       stroke="currentColor"
       viewBox="0 0 24 24"
@@ -185,6 +185,26 @@ export const TrashIcon = (props: React.SVGProps<SVGSVGElement>) => {
         strokeLinejoin="round"
         d="M3 6h18M4.5 6l1.5 14h12l1.5-14"
       ></path>
+    </svg>
+  );
+};
+
+export const UploadIcon = (props: React.SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      aria-hidden="true"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="currentColor"
+      viewBox="0 0 20 16"
+      {...props}
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+      />
     </svg>
   );
 };

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "cloudinary": "^2.0.1",
     "mapbox-gl": "^3.1.2",
     "next": "14.1.0",
     "query-string": "^8.2.0",
