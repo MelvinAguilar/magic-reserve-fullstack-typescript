@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import Image from "next/image";
 import RatingStars from "@/components/reviews/RatingStars";
 import Reviews from "@/components/reviews/Reviews";
+import MapComponent from "@/components/Map";
 
 const getTour = async (id: string) => {
   const url = process.env.NEXT_PUBLIC_API_URL + "/tours/" + id;
@@ -176,9 +177,9 @@ const Page = async ({ params }: URLProps) => {
           ))}
         </div>
       </Container>
-      {/* <Container as="section">
-        <MapComponent /> 
-      </Container> */}
+      <Container as="section">
+        <MapComponent locations={tour.locations} /> 
+      </Container>
       <div className="bg-[#F3F3F3]">
         <Container as="section">
           <Reviews reviews={tour.reviews} id={id} />
