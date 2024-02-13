@@ -3,8 +3,21 @@ import { TestimonialContainer } from "@/components/home/Testimonial";
 import ToursShowcase from "@/components/home/ToursShowcase";
 import Image from "next/image";
 
+const getTours = async () => {
+  const url = process.env.NEXT_PUBLIC_API_URL + "/tours?limit=6";
+  const res = await fetch(url, { method: "GET" })
+    .then((res) => {
+      return res.json();
+    })
+    .catch((err) => {
+      console.error(err);
+      return [];
+    });
+  return res?.data || [];
+};
+
 export default async function Home() {
-  let tours = await fetch("/api/tours/get").then((res) => res.json());
+  const tours = await getTours();
 
   return (
     <main id="main">
@@ -59,8 +72,10 @@ export default async function Home() {
           </div>
         </div>
       </Container>
-      
-      <ToursShowcase tours={tours} />
+
+      <Container as="section" className="grid !py-16">
+        <ToursShowcase tours={tours} />
+      </Container>
 
       <div className=" relative grid min-h-screen place-content-center">
         <h2 className="font-poly title z-10 leading-none">Tours</h2>

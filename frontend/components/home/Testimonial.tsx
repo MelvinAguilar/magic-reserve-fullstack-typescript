@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { StarFilledIcon } from "../Icons";
 import { Container } from "../Container";
+import { StarFilledIcon } from "../Icons";
 
 interface TestimonialProps {
   src: string;
