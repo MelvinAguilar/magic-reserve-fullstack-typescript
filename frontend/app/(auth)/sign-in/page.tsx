@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/components/Button";
 import Input from "@/components/form/Input";
 import { AuthContext } from "@/context/AuthContext";
 import { LoginSchema } from "@/validations/LoginSchema";
@@ -44,9 +45,9 @@ export default function SignIn() {
         placeholder="Password"
         errors={errors.password}
       />
-      <button type="submit" className="mt-8">
+      <Button type="submit" className="mt-8">
         Sign in
-      </button>
+      </Button>
       <p className="mt-8 text-center">
         Don&apos;t have an account?{" "}
         <Link href="/sign-up" className="text-blue-500">

@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/components/Button";
 import Input from "@/components/form/Input";
 import { ForgotPasswordSchema } from "@/validations/ForgotPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -85,11 +86,11 @@ export default function ForgotPassword() {
         placeholder="Email"
         errors={errors.email}
       />
-      <button type="submit" className="mt-8" disabled={timeRemaining > 0}>
+      <Button type="submit" className="mt-8" disabled={timeRemaining > 0}>
         {timeRemaining > 0
           ? `Retry in ${timeRemaining} seconds`
           : "Send Recovery Email"}
-      </button>
+      </Button>
     </form>
   );
 }

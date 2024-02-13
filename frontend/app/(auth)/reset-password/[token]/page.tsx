@@ -1,5 +1,6 @@
 "use client";
 
+import Button from "@/components/Button";
 import Input from "@/components/form/Input";
 import { ResetPasswordSchema } from "@/validations/ResetPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -82,9 +83,9 @@ export default function ResetPassword({ params }: URLTokenProps) {
         placeholder="Confirm Password"
         errors={errors.confirmPassword}
       />
-      <button type="submit" className="mt-8">
+      <Button type="submit" className="mt-8">
         Reset Password
-      </button>
+      </Button>
     </form>
   );
 }
