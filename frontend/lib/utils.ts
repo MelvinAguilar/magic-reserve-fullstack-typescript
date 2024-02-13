@@ -1,12 +1,83 @@
+import qs from "query-string";
+
+interface URLQueryParams {
+  params: string;
+  key: string;
+  value: string | null;
+}
+
+export const formUrlQuery = ({ params, key, value }: URLQueryParams) => {
+  const currentURL = qs.parse(params);
+
+  currentURL[key] = value;
+
+  return qs.stringifyUrl(
+    { url: window.location.pathname, query: currentURL },
+    { skipNull: true },
+  );
+};
+
+interface RemoveURLQueryParams {
+  params: string;
+  keysToRemove: string[];
+}
+
+export const removeKeysFromQuery = ({
+  params,
+  keysToRemove,
+}: RemoveURLQueryParams) => {
+  const currentURL = qs.parse(params);
+
+  keysToRemove.forEach((key) => delete currentURL[key]);
+
+  return qs.stringifyUrl(
+    { url: window.location.pathname, query: currentURL },
+    { skipNull: true },
+  );
+};
+
+interface TourFilters {
+  [key: string]: string | number | boolean | null;
+}
+
+export const applyTourFilters = (filters: TourFilters) => {
+  const currentURL = qs.parse(window.location.search);
+
+  // Add keys from filters to currentQuery
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      currentURL[key] = String(value);
+    }
+  });
+
+  // Delete keys from currentQuery if they are not present in filters
+  Object.keys(currentURL).forEach((key) => {
+    if (!(key in filters)) {
+      delete currentURL[key];
+    }
+  });
+
+  return qs.stringifyUrl(
+    { url: window.location.pathname, query: currentURL },
+    { skipNull: true },
+  );
+};
+
+interface ConvertFilters {
+  [key: string]: string | undefined;
+}
+
+export const filtersToStringServer = (filters: ConvertFilters) => {
+  return qs.stringify(filters, { skipNull: true });
+};
+
 export const getTimestamp = (createdAt: string): string => {
-  if (!createdAt) {
-    return "A long time ago";
-  }
+  if (!createdAt) return "A long time ago";
+
   const createdAtDate = new Date(createdAt);
   const now = new Date();
   const timeDifference = now.getTime() - createdAtDate.getTime();
 
-  // Define time intervals in milliseconds
   const minute = 60 * 1000;
   const hour = 60 * minute;
   const day = 24 * hour;
