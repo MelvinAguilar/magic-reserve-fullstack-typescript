@@ -18,6 +18,14 @@ export interface CloudinaryResource {
   secure_url: string;
 }
 
+export const getCloudImage = async (userId: string) => {
+  const result = await cloudinary.search
+    .expression(`public_id:magic-reserve-profile/${userId}`)
+    .execute();
+
+  return result.resources[0]; // return the first image
+};
+
 export const uploadCloudImage = async (userId: string, formData: FormData) => {
   const file = formData.get("file") as File;
   const arrayBuffer = await file.arrayBuffer();
@@ -43,10 +51,37 @@ export const uploadCloudImage = async (userId: string, formData: FormData) => {
   });
 };
 
-export const getCloudImage = async (userId: string) => {
-  const result = await cloudinary.search
-    .expression(`public_id:magic-reserve-profile/${userId}`)
-    .execute();
+export const UploadMultipleCloudImages = async (
+  folderId: string,
+  formData: FormData,
+) => {
+  const files = formData.getAll("file") as File[];
 
-  return result.resources[0]; // return the first image
+  const results = await Promise.all(
+    files.map(async (file) => {
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = new Uint8Array(arrayBuffer);
+
+      return new Promise((resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream(
+            {
+              folder: `magic-reserve/${folderId}`,
+              resource_type: "image",
+              tags: ["magic-reserve"],
+            },
+            (error, result) => {
+              if (result) {
+                resolve(result);
+              } else {
+                reject(error);
+              }
+            },
+          )
+          .end(buffer);
+      });
+    }),
+  );
+
+  return results;
 };
