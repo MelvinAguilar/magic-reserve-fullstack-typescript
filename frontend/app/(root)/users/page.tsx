@@ -1,8 +1,10 @@
 "use client";
 
 import UsersTable from "@/components/users/UsersTable";
+import { AuthContext } from "@/context/AuthContext";
 import { SearchParamsProps } from "@/types";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 import { toast } from "sonner";
 
 const getUsers = async (searchParams: {
@@ -41,6 +43,7 @@ const getUsers = async (searchParams: {
 
 export default function UsersPage({ searchParams }: SearchParamsProps) {
   const [data, setData] = useState([]);
+  const { isAuthenticated, loading } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -51,6 +54,15 @@ export default function UsersPage({ searchParams }: SearchParamsProps) {
     fetchData();
   }, [searchParams]);
 
+  useLayoutEffect(() => {
+    if (!loading && !isAuthenticated(["admin"])) {
+      redirect("/unauthorized");
+    }
+  }, [isAuthenticated, loading]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (!data) {
     return (

@@ -9,6 +9,7 @@ export const TourSchema = z.object({
   priceDiscount: z.coerce.number().optional().nullable(),
   summary: z.string().min(1),
   description: z.string().min(1),
+  startDates: z.array(z.string()),
   startLocation: z.object({
     coordinates: z.array(z.coerce.number()),
     address: z.string().min(1).optional().nullable(),

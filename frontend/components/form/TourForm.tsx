@@ -14,6 +14,7 @@ import React, { useLayoutEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Title } from "../Title";
 import MultipleImageUpload from "../upload/MultipleImageUpload";
 
 interface TourFormProps {
@@ -29,19 +30,19 @@ const TourForm = ({ type, tour }: TourFormProps) => {
     resolver: zodResolver(TourSchema),
     defaultValues: {
       name: tour?.name || "",
-      duration: tour?.duration || 0,
-      maxGroupSize: tour?.maxGroupSize || 0,
+      duration: tour?.duration || undefined,
+      maxGroupSize: tour?.maxGroupSize || undefined,
       difficulty: tour?.difficulty || "",
-      price: tour?.price || 0,
-      priceDiscount: tour?.priceDiscount || 0,
+      price: tour?.price || undefined,
+      priceDiscount: tour?.priceDiscount || undefined,
       summary: tour?.summary || "",
       description: tour?.description || "",
       startLocation: {
         description: tour?.startLocation?.description || "",
         address: tour?.startLocation?.address || "",
         coordinates: [
-          tour?.startLocation?.coordinates[0] || 0,
-          tour?.startLocation?.coordinates[1] || 0,
+          tour?.startLocation?.coordinates[0] || undefined,
+          tour?.startLocation?.coordinates[1] || undefined,
         ],
       },
       locations: tour?.locations || [],
@@ -124,6 +125,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
         return [];
       });
 
+
     if (images.length === 0) return;
 
     let imageCover;
@@ -143,6 +145,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
       description,
       startLocation,
       locations,
+      startDates
     } = data;
 
     const body = {
@@ -156,10 +159,10 @@ const TourForm = ({ type, tour }: TourFormProps) => {
       description,
       startLocation,
       locations,
+      startDates,
       imageCover: imageCover || coverUrl,
       images: type === "create" ? images : imageUrls.concat(images),
     };
-
     const token = localStorage.getItem("session");
 
     fetch(`/api/tours`, {
@@ -192,6 +195,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
         toast.error(err.message);
       });
   };
+  
 
   const [numDestinations, setNumDestinations] = useState(1);
 
@@ -207,24 +211,8 @@ const TourForm = ({ type, tour }: TourFormProps) => {
       onInvalid={handleInvalid}
       className="grid rounded-lg bg-white p-8 shadow-lg md:grid-cols-2 md:gap-x-8"
     >
-      {errors && (
-        <div>
-          {Object.keys(errors).map((key) => {
-            const errorMessage = (errors as Record<string, any>)[key].message;
-            if (errorMessage === "Required") {
-              return (
-                <p key={key}>
-                  {key} - {errorMessage}
-                </p>
-              );
-            } else {
-              return null;
-            }
-          })}
-        </div>
-      )}
       <div className="md:col-span-2">
-        <h1 className="mb-8 text-3xl font-bold">Create a new tour</h1>
+        <Title as="h1" className="mb-8 text-3xl font-bold">Create a new tour</Title>
       </div>
       <div>
         <Input
@@ -445,6 +433,17 @@ const TourForm = ({ type, tour }: TourFormProps) => {
                 errors={
                   errors?.locations && errors.locations[index]?.coordinates?.[1]
                 }
+                className="!mt-2 !bg-white"
+              />
+            </div>
+
+             <div className="col-span-2">
+              <Input
+                innerRef={register(`startDates.${index}`)}
+                name={`location-day-${index}`}
+                type="date"
+                placeholder="Day"
+                errors={errors.startDates && errors.startDates[index]}
                 className="!mt-2 !bg-white"
               />
             </div>

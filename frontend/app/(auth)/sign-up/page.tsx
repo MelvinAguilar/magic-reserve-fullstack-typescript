@@ -6,12 +6,15 @@ import { AuthContext } from "@/context/AuthContext";
 import { RegisterSchema } from "@/validations/RegisterSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { useContext } from "react";
+import { useRouter } from "next/navigation";
+import { useContext, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 export default function SignUp() {
-  const { register: signup } = useContext(AuthContext);
+  const { user, register: signup } = useContext(AuthContext);
+  const router = useRouter();
 
   const {
     register,
@@ -20,6 +23,13 @@ export default function SignUp() {
   } = useForm<z.infer<typeof RegisterSchema>>({
     resolver: zodResolver(RegisterSchema),
   });
+
+  useEffect(() => {
+    if (user) {
+      toast.error("You are already logged in");
+      router.push("/");
+    }
+  }, [user]);
 
   const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = (data) => {
     signup(data.name, data.email, data.password);

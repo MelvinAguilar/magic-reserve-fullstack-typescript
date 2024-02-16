@@ -98,7 +98,7 @@ const Page = async ({ params }: URLProps) => {
               </GenericCard>
             </ul>
           </div>
-          <GenericCard className="mt-8 h-fit">
+          <GenericCard className="!w-full">
             {tour.priceDiscount ? (
               <>
                 <Title as="del" className="line-through text-gray-500 mb-2">${tour.price}</Title>

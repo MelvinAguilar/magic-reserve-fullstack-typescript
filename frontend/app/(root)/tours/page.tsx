@@ -48,7 +48,7 @@ export default async function ToursPage({ searchParams }: SearchParamsProps) {
   const tours = await getTours(searchParams);
 
   return (
-    <main className="min-h-full">
+    <main className="flex-1">
       <div className="relative bg-primary/20 pt-20">
         <Container as="section">
           <Filters searchParams={searchParams} />

@@ -3,6 +3,7 @@
 import { useCartStore } from "@/store/store";
 import { AddCartType } from "@/types";
 import { useState } from "react";
+import Button from "../Button";
 
 export default function AddCartButton({
   name,
@@ -23,15 +24,13 @@ export default function AddCartButton({
   };
 
   return (
-    <>
-      <button
+      <Button
         disabled={added}
         onClick={handleAddToCart}
-        className="mt-8 rounded-lg bg-primary px-24 py-3 font-poly text-white transition-all hover:bg-primary-light"
+        className="mt-8"
       >
         {!added && <span>Reserve tour</span>}
         {added && <span>Adding to cart</span>}
-      </button>
-    </>
+      </Button>
   );
 }

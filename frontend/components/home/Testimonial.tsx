@@ -38,7 +38,7 @@ export default function Testimonial({
       </blockquote>
       <figcaption className="mt-4 flex items-center gap-x-4">
         <Image
-          className="size-12 rounded-full bg-gray-50"
+          className="size-12 rounded-full bg-gray-50 object-cover"
           src={src}
           alt={alt}
           width={48}
@@ -55,7 +55,7 @@ export default function Testimonial({
 
 const testimonials = [
   {
-    src: "https://i.imgur.com/gVXoto8.jpg",
+    src: "https://i.imgur.com/Voas7TX.jpeg",
     alt: "Testimonial 1",
     name: "Sarah Thompson",
     title: "Marketing Executive",

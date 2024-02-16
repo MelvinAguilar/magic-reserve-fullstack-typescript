@@ -4,6 +4,7 @@ import Button from "@/components/Button";
 import Input from "@/components/form/Input";
 import { ForgotPasswordSchema } from "@/validations/ForgotPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -86,7 +87,10 @@ export default function ForgotPassword() {
         placeholder="Email"
         errors={errors.email}
       />
-      <Button type="submit" className="mt-8" disabled={timeRemaining > 0}>
+      <Link href="/sign-in" className="text-blue-500 mt-4">
+        Remembered your password? Sign in
+      </Link>
+      <Button type="submit" className="mt-8 !px-4" disabled={timeRemaining > 0}>
         {timeRemaining > 0
           ? `Retry in ${timeRemaining} seconds`
           : "Send Recovery Email"}

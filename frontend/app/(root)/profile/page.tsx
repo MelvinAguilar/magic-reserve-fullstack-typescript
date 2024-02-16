@@ -62,7 +62,7 @@ const Page = () => {
           <h1 className="mt-12 text-center text-[8vw] font-bold leading-[1]">
             {user.name}
           </h1>
-          <div className="flex flex-wrap space-x-4">
+          <div className="grid md:grid-cols-2 w-full space-x-4">
             <LinkComponent
               href="/profile/edit"
               className="!rounded-lg"

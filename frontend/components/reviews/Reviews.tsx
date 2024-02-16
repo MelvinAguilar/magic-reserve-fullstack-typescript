@@ -173,80 +173,80 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
   return (
     <>
       <div>
-        <Title className="mb-4 mt-8">
-          Leave a review for this tour
-        </Title>
-
         {isAuthenticated(["user", "admin"]) && (
-          <form onSubmit={handleSubmit(onSubmit)} className="w-full">
-            <div className="mt-8 flex items-center gap-2">
-              {Array.from({ length: 5 }, (_, i) => (
-                <label
-                  key={i}
-                  htmlFor={`rating-${i}`}
-                  className="relative flex items-center justify-center"
-                >
-                  <input
-                    type="radio"
-                    id={`rating-${i}`}
-                    value={Number(i + 1)}
-                    {...register("rating")}
-                    className="absolute left-0 top-0 size-full cursor-pointer appearance-none"
-                    onClick={() => setRating(i + 1)}
-                    aria-describedby="rating-error"
-                  />
-                  <StarFilledIcon
-                    className={`size-6 ${
-                      rating > i ? "text-yellow-300" : "text-primary"
-                    }`}
-                    aria-hidden="true"
-                  />
-                </label>
-              ))}
-              {rating > 0 && (
-                <p className="text-sm text-gray-500">
-                  &mdash; You rated {rating} stars
-                </p>
-              )}
-            </div>
-            <div aria-live="polite" aria-atomic="true">
-              {errors && errors?.rating?.message && (
-                <p
-                  id="rating-error"
-                  role="alert"
-                  className="mt-2 text-sm font-semibold text-red-500"
-                >
-                  {errors.rating.message || ""}
-                </p>
-              )}
-            </div>
-            <Input
-              innerRef={register("comment")}
-              name="Review"
-              type="text"
-              placeholder="Write your review here"
-              errors={errors.comment}
-              inputType="textarea"
-              className="!bg-light"
-            />
-            <div className="mt-8 flex flex-wrap items-center gap-6">
-              <button
-                type="submit"
-                className="rounded-lg bg-primary px-24 py-3 font-poly text-white transition-all hover:bg-primary-light"
-              >
-                {isEditing ? "Update" : "Submit"}
-              </button>
-              {isEditing && (
+          <>
+            <Title className="mb-4 mt-8">Leave a review for this tour</Title>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full">
+              <div className="mt-8 flex items-center gap-2">
+                {Array.from({ length: 5 }, (_, i) => (
+                  <label
+                    key={i}
+                    htmlFor={`rating-${i}`}
+                    className="relative flex items-center justify-center"
+                  >
+                    <input
+                      type="radio"
+                      id={`rating-${i}`}
+                      value={Number(i + 1)}
+                      {...register("rating")}
+                      className="absolute left-0 top-0 size-full cursor-pointer appearance-none"
+                      onClick={() => setRating(i + 1)}
+                      aria-describedby="rating-error"
+                    />
+                    <StarFilledIcon
+                      className={`size-6 ${
+                        rating > i ? "text-yellow-300" : "text-primary"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  </label>
+                ))}
+                {rating > 0 && (
+                  <p className="text-sm text-gray-500">
+                    &mdash; You rated {rating} stars
+                  </p>
+                )}
+              </div>
+              <div aria-live="polite" aria-atomic="true">
+                {errors && errors?.rating?.message && (
+                  <p
+                    id="rating-error"
+                    role="alert"
+                    className="mt-2 text-sm font-semibold text-red-500"
+                  >
+                    {errors.rating.message || ""}
+                  </p>
+                )}
+              </div>
+              <Input
+                innerRef={register("comment")}
+                name="Review"
+                type="text"
+                placeholder="Write your review here"
+                errors={errors.comment}
+                inputType="textarea"
+                className="!bg-light"
+              />
+              <div className="mt-8 flex flex-wrap items-center gap-6">
                 <button
-                  type="button"
-                  onClick={handleCancel}
-                  className="rounded-lg bg-auxiliary px-24 py-3 font-poly text-white transition-all hover:bg-auxiliary-light"
+                  type="submit"
+                  className="rounded-lg bg-primary px-24 py-3 font-poly text-white transition-all hover:bg-primary-light"
                 >
-                  Cancel
+                  {isEditing ? "Update" : "Submit"}
                 </button>
-              )}
-            </div>
-          </form>
+                {isEditing && (
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="rounded-lg bg-auxiliary px-24 py-3 font-poly text-white transition-all hover:bg-auxiliary-light"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+          </>
         )}
       </div>
       <Title className="mb-8 mt-20">Reviews</Title>

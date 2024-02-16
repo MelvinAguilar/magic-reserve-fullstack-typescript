@@ -1,7 +1,5 @@
 "use client";
 
-import { Tour } from "@/types";
-import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -11,11 +9,13 @@ import {
   TableRow,
 } from "@/components/tours/Table";
 import useModalClose from "@/hook/useModalClose";
-import RatingStars from "../RatingStars";
-import Modal from "../Modal";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { Tour } from "@/types";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import Modal from "../Modal";
+import RatingStars from "../reviews/RatingStars";
 
 interface DifficultyLabelProps {
   difficulty: string;
@@ -36,7 +36,6 @@ const DifficultyLabel: React.FC<DifficultyLabelProps> = ({ difficulty }) => {
       colorClass = "bg-yellow-500/20";
       borderColorClass = "border-yellow-600";
       textClass = "text-yellow-600";
-
       break;
     case "difficult":
       colorClass = "bg-red-500/20";
@@ -60,7 +59,7 @@ const DifficultyLabel: React.FC<DifficultyLabelProps> = ({ difficulty }) => {
 };
 
 interface ToursTableProps {
-  tours: Tour[]; // Propiedad para pasar el array de tours
+  tours: Tour[];
 }
 
 const ToursTable = ({ tours }: ToursTableProps) => {
@@ -72,26 +71,17 @@ const ToursTable = ({ tours }: ToursTableProps) => {
 
   const toggleMenuForTour = (tourId: string) => {
     if (showMenuForTour === tourId) {
-      setShowMenuForTour(null); // Oculta el menú si ya está visible para este tour
+      setShowMenuForTour(null);
     } else {
-      setShowMenuForTour(tourId); // Muestra el menú para este tour
+      setShowMenuForTour(tourId);
     }
   };
 
-  console.log("tours: d ", tours);
-
-  //  Only console the slug of the all tours:
-  tours.map((tour) => {
-    console.log("tour.slug: ", tour.ratingsAverage);
-  });
-
   const handleDeleteOption = (id: string) => {
-    console.log("Delete tour with id: ", id);
     setModalOpen(true);
     setSelectedTour(id);
   };
 
-  //   Modal component = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTour, setSelectedTour] = useState<string | null>(null);
 
@@ -101,7 +91,6 @@ const ToursTable = ({ tours }: ToursTableProps) => {
   };
 
   const handleConfirm = () => {
-    console.log("Deleting tour: ", selectedTour);
     if (!selectedTour) return;
     deleteTour(selectedTour);
     setModalOpen(false);
@@ -120,19 +109,12 @@ const ToursTable = ({ tours }: ToursTableProps) => {
       body: JSON.stringify({ id }),
     })
       .then((res) => {
-        console.log("RES: ", res);
-
         if (!res.ok) {
           throw new Error("Error deleting tour");
         }
-        // if (res.ok) {
-        //   return res.json();
-        // }
         return res.json();
-        // return null;
       })
       .then((data) => {
-        console.log("DATA: ", data);
         if (data?.status === "success") {
           toast.success("Tour deleted");
           router.refresh();

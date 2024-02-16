@@ -56,7 +56,10 @@ export default function Cart() {
                   </h3>
                   <p className="">${product.price}</p>
                 </div>
-                <Link href={product.id} className="block font-medium underline">
+                <Link
+                  href={`/tours/${product.id}`}
+                  className="block font-medium underline"
+                >
                   See details
                 </Link>
                 <div className="mt-auto flex justify-between gap-4">

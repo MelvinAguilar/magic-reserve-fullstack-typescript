@@ -112,7 +112,7 @@ const UpdateUserForm = ({ userId }: { userId: string }) => {
         Upload a new photo <span className="">(optional)</span>
       </p>
 
-      <div className="flex items-center justify-center gap-8">
+      <div className="flex items-center justify-center gap-8 mb-8">
         {resource && resource.public_id ? (
           <Image
             src={resource.secure_url}
@@ -122,7 +122,7 @@ const UpdateUserForm = ({ userId }: { userId: string }) => {
             className="aspect-square rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-[13.75rem] w-[13.75rem] items-center justify-center rounded-full bg-gray-200">
+          <div className="flex h-[13.75rem] w-[13.75rem] aspect-square items-center justify-center rounded-full bg-gray-200">
             <p>No image</p>
           </div>
         )}
