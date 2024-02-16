@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { Title } from "../Title";
 
 interface CardProps {
   id: string;
@@ -52,9 +53,9 @@ const Card = ({ id, name, summary, imageCover }: CardProps) => {
           </h3>
         </div>
       </div>
-      <h3 className="mt-4 font-poly text-xl font-extrabold leading-tight tracking-tight">
+      <Title as="h3" className="mt-4" small>
         {name}
-      </h3>
+      </Title>
     </>
   );
 };

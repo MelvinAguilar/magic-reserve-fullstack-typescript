@@ -19,7 +19,7 @@ export default function Cart() {
   const handleCheckoutClick = () => {
     if (!user) {
       toast.error("You need to be logged in to checkout");
-      return router.push("/login");
+      return router.push("/sign-in");
     } else {
       router.push("/checkout");
     }

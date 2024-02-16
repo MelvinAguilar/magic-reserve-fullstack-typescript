@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { Title } from "../Title";
 import Card from "../cards/Card";
 
 interface Tour {
@@ -18,11 +20,9 @@ const ToursShowcase = ({
 }>) => {
   return (
     <section>
-      <h2 className="mb-12 font-poly text-3xl font-extrabold tracking-tight">
-        Popular Tours
-      </h2>
+      <Title className="mb-12">Popular Tours</Title>
 
-      <ul className="grid grid-cols-1 gap-10 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-14 gap-y-16 sm:grid-cols-2">
         {!tours || tours.length === 0 ? (
           <p>No tours available</p>
         ) : (
@@ -40,13 +40,13 @@ const ToursShowcase = ({
       </ul>
 
       {!hideButton && (
-        <div className="mt-8 text-center">
-          <a
+        <div className="mt-12 text-center">
+          <Link
             href="/tours"
-            className="font-poly text-lg font-bold tracking-tight underline"
+            className="font-poly text-xl font-bold tracking-tight underline"
           >
-            View all tours
-          </a>
+            View all tours <span>&rarr;</span>
+          </Link>
         </div>
       )}
     </section>

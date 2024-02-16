@@ -12,6 +12,7 @@ import { z } from "zod";
 import { StarFilledIcon } from "../Icons";
 import Modal from "../Modal";
 import Comment from "./Comment";
+import { Title } from "../Title";
 
 interface ReviewsProps {
   reviews: any;
@@ -50,7 +51,6 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
       body: JSON.stringify({ id }),
     })
       .then((res) => {
-
         if (!res.ok) {
           throw new Error("Error deleting review");
         }
@@ -71,7 +71,9 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
       });
   };
 
-  const onSubmit: SubmitHandler<z.infer<typeof ReviewSchema>> = async (data) => {
+  const onSubmit: SubmitHandler<z.infer<typeof ReviewSchema>> = async (
+    data,
+  ) => {
     const token = localStorage.getItem("session");
 
     if (!token) {
@@ -171,9 +173,9 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
   return (
     <>
       <div>
-        <h2 className="mb-4 mt-8 font-poly text-3xl font-extrabold tracking-tight">
-          Reviews
-        </h2>
+        <Title className="mb-4 mt-8">
+          Leave a review for this tour
+        </Title>
 
         {isAuthenticated(["user", "admin"]) && (
           <form onSubmit={handleSubmit(onSubmit)} className="w-full">
@@ -247,7 +249,8 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
           </form>
         )}
       </div>
-      <div className="mt-24 flex flex-col gap-10">
+      <Title className="mb-8 mt-20">Reviews</Title>
+      <div className="grid gap-10 md:grid-cols-2">
         {reviews.map((review: any) => (
           <Comment
             key={review.id}

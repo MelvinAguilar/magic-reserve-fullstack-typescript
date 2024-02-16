@@ -1,4 +1,5 @@
 import { Container } from "@/components/Container";
+import { Title } from "@/components/Title";
 import { TestimonialContainer } from "@/components/home/Testimonial";
 import ToursShowcase from "@/components/home/ToursShowcase";
 import Image from "next/image";
@@ -55,9 +56,7 @@ export default async function Home() {
             />
           </div>
           <div>
-            <h2 className="font-poly mb-4 text-3xl font-extrabold tracking-tight">
-              Elevate Your Journey with Us
-            </h2>
+            <Title className="mb-4">Elevate Your Journey with Us</Title>
             <p className="mb-4">
               Unleash the full potential of your adventure with our meticulously
               planned itineraries. Each journey is thoughtfully curated to
@@ -78,7 +77,7 @@ export default async function Home() {
       </Container>
 
       <div className=" relative grid min-h-screen place-content-center">
-        <h2 className="font-poly title z-10 leading-none">Tours</h2>
+        <h2 className="title z-10 font-poly leading-none">Tours</h2>
         <Image
           src="https://i.imgur.com/KbWVnGv.jpg"
           alt=""

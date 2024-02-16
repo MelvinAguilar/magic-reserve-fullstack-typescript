@@ -1,4 +1,3 @@
-
 interface RatingStarsProps {
   rating: number;
   quantity?: number;
@@ -29,7 +28,7 @@ const RatingStars = ({ rating, quantity, small }: RatingStarsProps) => {
           <p className="text-gray-500">No reviews yet</p>
         )}
       </div>
-      {quantity && <p>{quantity} reviews</p>}
+      {/* {quantity && <p>{quantity} reviews</p>} */}
     </>
   );
 };

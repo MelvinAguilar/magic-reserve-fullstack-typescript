@@ -22,14 +22,14 @@
   }
 
   .box {
-    background-color: #fff;
+    background-color: #f8f8f8;
     position: absolute;
     left: 0%;
     top: 0%;
     right: auto;
     bottom: auto;
-    overflow: auto;
     z-index: 5;
+    overflow: auto;
     width: 100%;
     height: 100%;
     border-radius: 1em;
@@ -49,9 +49,28 @@
   .blend-exclusion {
     mix-blend-mode: exclusion;
   }
+
+  .blend-difference {
+    mix-blend-mode: difference;
+  }
 }
 
 @layer base {
+  .empty-stars:before,
+  .full-stars:before {
+    content: "\2605\2605\2605\2605\2605";
+    font-size: 2rem;
+  }
+  .small-stars:before {
+    font-size: 1.25rem !important;
+  }
+  .empty-stars:before {
+    -webkit-text-stroke: 1px #848484;
+  }
+  .full-stars:before {
+    -webkit-text-stroke: 1px orange;
+  }
+
   html {
     height: 100%;
   }
@@ -62,7 +81,6 @@
     font-family: var(--font-mona-sans);
     @apply text-lg;
   }
-
 
   .card-hovered .card-item {
     @apply opacity-100;
