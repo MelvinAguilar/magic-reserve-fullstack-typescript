@@ -19,7 +19,8 @@
     "react-hook-form": "^7.49.3",
     "react-map-gl": "^7.1.7",
     "sonner": "^1.4.0",
-    "zod": "^3.22.4"
+    "zod": "^3.22.4",
+    "zustand": "^4.5.0"
   },
   "devDependencies": {
     "@types/node": "^20",
