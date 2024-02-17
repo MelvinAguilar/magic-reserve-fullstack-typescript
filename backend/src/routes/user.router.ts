@@ -17,6 +17,9 @@ router.get('/me', userController.getMe, userController.getUser);
 router.patch('/update-password', authController.updatePassword);
 router.patch('/update-me', userController.updateMe);
 router.delete('/delete-me', userController.deleteMe);
+router.get('/my-reservations', userController.getMyReservations);
+
+router.patch('/toggle-favorite-tour/:id', userController.toggleFavoriteTour);
 
 // Restrict all routes after this middleware to admin users only
 router.use(authController.authorization('admin'));

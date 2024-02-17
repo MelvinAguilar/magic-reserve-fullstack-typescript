@@ -5,6 +5,7 @@ const AppError = require('./../utils/appError');
 const APIFeatures = require('./../utils/apiFeatures');
 
 import { sendResponse } from './../utils/apiResponse';
+import { RequestWithUser } from './auth.controller';
 
 /*
  * @param {Model} Model - The model to query
@@ -94,3 +95,25 @@ exports.getAll = (Model: any) =>
 
     sendResponse(res, 200, docs, docs.length);
   });
+
+/*
+ * @param {Model} Model - The model to query
+ * @param {string} userIdField - The field name in the model representing the user ID
+ * @returns {Function} - A middleware function
+ */
+exports.getMyRecords = (Model: any, userIdField: string = 'user') =>
+  catchAsync(
+    async (req: RequestWithUser, res: Response, _next: NextFunction) => {
+      let filter = { [userIdField]: req.user.id };
+
+      const features = new APIFeatures(Model.find(filter), req.query)
+        .filter()
+        .sort()
+        .limitFields()
+        .paginate();
+
+      const docs = await features.query;
+
+      sendResponse(res, 200, docs, docs.length);
+    },
+  );

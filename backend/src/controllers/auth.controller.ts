@@ -84,7 +84,7 @@ exports.login = catchAsync(
   },
 );
 
-interface RequestWithUser extends Request {
+export interface RequestWithUser extends Request {
   user: {
     id: string;
     name: string;

@@ -9,6 +9,7 @@ exports.getUser = factory.getOne(User);
 exports.createUser = factory.createOne(User);
 exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);
+exports.getMyReservations = factory.getMyRecords(User);
 
 interface RequestWithUser extends Request {
   user: {
@@ -71,6 +72,35 @@ exports.deleteMe = catchAsync(
       });
     },
   ),
+);
+
+exports.toggleFavoriteTour = catchAsync(
+  async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    const userId = req.user.id;
+    const tourId = req.params.tourId;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return next(new AppError('User not found', 404));
+    }
+
+    const index = user.favoriteTours.indexOf(tourId);
+    if (index === -1) {
+      user.favoriteTours.push(tourId);
+    } else {
+      user.favoriteTours.splice(index, 1);
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user,
+      },
+    });
+  },
 );
 
 // Filter out unwanted fields names that are not allowed to be updated

@@ -8,6 +8,7 @@ interface IUser {
   email: string;
   photo: string;
   role: string;
+  favoriteTours: mongoose.Schema.Types.ObjectId[];
   password: string;
   passwordChangedAt: Date;
   passwordResetToken: string | undefined;
@@ -39,6 +40,12 @@ const userSchema = new mongoose.Schema<IUser>({
     minlength: 8,
     select: false,
   },
+  favoriteTours: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Tour',
+    },
+  ],
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
