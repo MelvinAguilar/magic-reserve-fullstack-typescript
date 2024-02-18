@@ -17,6 +17,7 @@ export interface Tour {
   slug: string;
   duration: number;
   maxGroupSize: number;
+  currentGroupSize: number;
   difficulty: string;
   ratingsAverage: number;
   ratingsQuantity: number;
@@ -61,6 +62,8 @@ export type AddCartType = {
   quantity?: number | 1;
   summary?: string;
   imageCover: string;
+  currentGroupSize?: number;
+  maxGroupSize?: number;
 };
 
 export type CartType = {

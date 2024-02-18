@@ -10,12 +10,16 @@ import { useContext } from "react";
 import { toast } from "sonner";
 import Button from "../Button";
 
-export default function Cart() {
+
+interface CartProps {
+  isOpen: boolean;
+}
+
+export default function Cart({ isOpen }: CartProps) {
   const cartStore = useCartStore();
   const { user } = useContext(AuthContext);
   const router = useRouter();
 
-  useModalClose(() => cartStore.closeCart(), ".dropdown-cart");
   const handleCheckoutClick = () => {
     if (!user) {
       toast.error("You need to be logged in to checkout");
@@ -28,8 +32,8 @@ export default function Cart() {
   return (
     <div
       className={`dropdown-cart absolute right-0 top-auto z-50 my-4 w-[450px] divide-y divide-gray-100
-       rounded-lg bg-white shadow-lg ${cartStore.isOpen ? "block" : "hidden"}`}
-    >
+       rounded-lg bg-white shadow-lg ${isOpen ? "block" : "hidden"}`}
+    > 
       <h2 className="sr-only">Shopping Cart</h2>
 
       <div className="w-full p-4">

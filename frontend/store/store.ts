@@ -3,13 +3,10 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type CartState = {
-  isOpen: boolean;
   cart: AddCartType[];
   addToCart: (item: AddCartType) => void;
-  removeFromCart: (name: string) => void;
+  removeFromCart: (id: string) => void;
   removeItem: (name: CartType) => void;
-  toggleCart: () => void;
-  closeCart: () => void;
   clearCart: () => void;
 };
 
@@ -17,7 +14,6 @@ export const useCartStore = create<CartState>()(
   persist(
     (set) => ({
       cart: [],
-      isOpen: false,
       addToCart: (item) => {
         set((state) => {
           const exists = state.cart.find((i) => i.id === item.id);
@@ -35,10 +31,9 @@ export const useCartStore = create<CartState>()(
           }
         });
       },
-
-      removeFromCart: (name) =>
+      removeFromCart: (id) =>
         set((state) => ({
-          cart: state.cart.filter((item) => item.name !== name),
+          cart: state.cart.filter((i) => i.id !== id),
         })),
       removeItem: (item) =>
         set((state) => {
@@ -57,12 +52,8 @@ export const useCartStore = create<CartState>()(
             return { cart: filteredCart };
           }
         }),
-
-      toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
-      closeCart: () => set({ isOpen: false }),
       clearCart: () => set({ cart: [] }),
     }),
-
     {
       name: "cart-storage",
     },

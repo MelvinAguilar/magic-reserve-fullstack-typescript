@@ -1,10 +1,12 @@
+"use client";
+
 import { Container } from "@/components/Container";
 import TourForm from "@/components/form/TourForm";
 import { ParamsProps, Tour } from "@/types";
 import { toast } from "sonner";
 import { AuthContext } from "@/context/AuthContext";
 import { redirect } from "next/navigation";
-import { useContext, useLayoutEffect } from "react";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 
 const getTour = async (id: string) => {
   const url = process.env.NEXT_PUBLIC_API_URL + "/tours/" + id;
@@ -20,9 +22,9 @@ const getTour = async (id: string) => {
   return res?.data || [];
 };
 
-const Page = async ({ params }: ParamsProps) => {
+const Page = ({ params }: ParamsProps) => {
+  const [data, setData] = useState<Tour>();
   const { isAuthenticated, loading } = useContext(AuthContext);
-  const tour: Tour = await getTour(params.id);
 
   useLayoutEffect(() => {
     if (!loading && !isAuthenticated(["admin"])) {
@@ -30,7 +32,16 @@ const Page = async ({ params }: ParamsProps) => {
     }
   }, [isAuthenticated, loading]);
 
-  if (!tour) {
+  useEffect(() => { 
+    const fetchData = async () => {
+      const tour: Tour = await getTour(params.id);
+      setData(tour);
+    };
+
+    fetchData();
+  }, [params]);
+
+  if (!data) {
     return <p>Loading...</p>;
   }
   if (loading) {
@@ -39,7 +50,7 @@ const Page = async ({ params }: ParamsProps) => {
 
   return (
     <Container>
-      <TourForm type="edit" tour={tour} />
+      <TourForm type="edit" tour={data} />
     </Container>
   );
 };

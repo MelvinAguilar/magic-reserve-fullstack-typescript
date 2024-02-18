@@ -99,16 +99,30 @@ const Page = async ({ params }: URLProps) => {
             </ul>
           </div>
           <GenericCard className="!w-full">
+            <p>
+              {tour.currentGroupSize} people are currently booked on this tour
+            </p>
+            <div className="border-y border-gray-200 py-4 my-3">
+
+            <p>
+              {tour.maxGroupSize - tour.currentGroupSize} spots left for this tour
+            </p>
+            </div>
             {tour.priceDiscount ? (
               <>
-                <Title as="del" className="line-through text-gray-500 mb-2">${tour.price}</Title>
+                <Title as="del" className="line-through text-gray-500 mb-2" small>${tour.price}</Title>
                 <Title large>${tour.price - tour.priceDiscount}</Title>
               </>
             ) : (
               <Title large>${tour.price}</Title>
             )}
 
-            <AddCartButton {...tour} />
+            {tour.currentGroupSize === tour.maxGroupSize ? (
+              <p className="text-rose-500">Tour is fully booked</p>
+            ) : (
+              <AddCartButton {...tour} />
+            )}
+                       
           </GenericCard>
         </div>
         <div className="grid gap-8 md:grid-cols-2">

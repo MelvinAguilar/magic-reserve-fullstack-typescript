@@ -11,12 +11,14 @@ export default function AddCartButton({
   imageCover,
   price,
   quantity,
+  maxGroupSize,
+  currentGroupSize,
 }: AddCartType) {
   const cartStore = useCartStore();
   const [added, setAdded] = useState(false);
 
   const handleAddToCart = () => {
-    cartStore.addToCart({ id, name, price, quantity, imageCover });
+    cartStore.addToCart({ id, name, price, quantity, imageCover, maxGroupSize, currentGroupSize });
     setAdded(true);
     setTimeout(() => {
       setAdded(false);

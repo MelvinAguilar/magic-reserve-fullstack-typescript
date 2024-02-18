@@ -6,11 +6,12 @@ interface InputProps {
   name: string;
   type?: string;
   inputType?: "input" | "textarea";
-  placeholder: string;
+  placeholder?: string;
   className?: string;
   ariaLabel?: string;
   errors: FieldError | undefined;
   defaultValue?: string;
+  id?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -18,14 +19,16 @@ const Input: React.FC<InputProps> = ({
   name,
   type = "text",
   inputType = "input",
-  placeholder,
+  placeholder = "",
   className = "",
-  ariaLabel = undefined,
+  ariaLabel,
   errors,
   defaultValue,
+  id,
 }) => {
   const ariaInvalid = errors ? "true" : "false";
-  const additionalProps = ariaLabel ? { "aria-label": ariaLabel } : {};
+  const ariaLabelProps = ariaLabel ? { "aria-label": ariaLabel } : {};
+  const idProps = id ? { id: id } : {};
 
   const InputComponent = inputType === "textarea" ? "textarea" : "input";
   const inputTypeadditionalProps = inputType ? { rows: 8 } : {};
@@ -35,10 +38,10 @@ const Input: React.FC<InputProps> = ({
       <InputComponent
         {...innerRef}
         {...inputTypeadditionalProps}
-        {...additionalProps} // @ts-ignore
+        {...idProps}
+        {...ariaLabelProps}
         type={type}
         placeholder={placeholder}
-        aria-label={ariaLabel}
         aria-invalid={ariaInvalid}
         aria-describedby={`${name}-error`}
         className={`mt-8 w-full rounded-lg border border-primary-light bg-light px-3 py-4 ${className}`}

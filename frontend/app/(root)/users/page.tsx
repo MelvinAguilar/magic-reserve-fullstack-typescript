@@ -45,7 +45,7 @@ export default function UsersPage({ searchParams }: SearchParamsProps) {
   const [data, setData] = useState([]);
   const { isAuthenticated, loading } = useContext(AuthContext);
 
-  useEffect(() => {
+  useEffect(() => { 
     const fetchData = async () => {
       const users = await getUsers(searchParams);
       setData(users || []);

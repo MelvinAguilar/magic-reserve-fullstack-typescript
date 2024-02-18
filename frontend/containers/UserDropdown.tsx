@@ -41,17 +41,16 @@ export function DropdownContainer() {
         )}
       </button>
 
-      <UserDropdown setIsOpen={setIsOpen} isOpen={isOpen} />
+      <UserDropdown isOpen={isOpen} />
     </div>
   );
 }
 
 interface UserDropdownProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
 }
 
-export function UserDropdown({ isOpen, setIsOpen }: UserDropdownProps) {
+export function UserDropdown({ isOpen }: UserDropdownProps) {
   const { user, logout } = useContext(AuthContext);
 
   return (

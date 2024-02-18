@@ -9,7 +9,7 @@ interface CardProps {
   id: string;
   name: string;
   imageCover: string;
-  summary: string;
+summary: string;
 }
 
 const Card = ({ id, name, summary, imageCover }: CardProps) => {

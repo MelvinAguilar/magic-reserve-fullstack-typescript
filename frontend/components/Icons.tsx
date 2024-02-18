@@ -208,3 +208,45 @@ export const UploadIcon = (props: React.SVGProps<SVGSVGElement>) => {
     </svg>
   );
 };
+
+export const IconPlus = (props: React.SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 18 18"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M9 1v16M1 9h16"
+      />
+    </svg>
+  );
+};
+
+export const IconMinus = (props: React.SVGProps<SVGSVGElement>) => {
+  return (
+    <svg
+      stroke="currentColor"
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 18 18"
+    >
+      <path
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+        d="M1 9h16"
+      />
+    </svg>
+  );
+};
