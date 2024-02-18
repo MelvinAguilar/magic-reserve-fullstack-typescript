@@ -5,6 +5,7 @@ interface ITour {
   name: string;
   slug: string;
   duration: number;
+  currentGroupSize: number;
   maxGroupSize: number;
   difficulty: string;
   ratingsAverage: number;
@@ -57,6 +58,11 @@ const tourSchema = new mongoose.Schema<ITour>(
     maxGroupSize: {
       type: Number,
       required: [true, 'Group size is required'],
+    },
+    // Current group size for the tour
+    currentGroupSize: {
+      type: Number,
+      default: 0,
     },
     // Difficulty level of the tour
     difficulty: {

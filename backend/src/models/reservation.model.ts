@@ -85,7 +85,7 @@ reservationSchema.pre('save', async function (next) {
 
     next();
   } catch (error) {
-    next(error as AppError | CallbackError | undefined);
+    next(error as typeof AppError | CallbackError | undefined);
   }
 });
 
@@ -130,7 +130,7 @@ reservationSchema.pre<Query<any, any>>(
 
       next();
     } catch (error) {
-      next(error as AppError | CallbackError | undefined);
+      next(error as typeof AppError | CallbackError | undefined);
     }
   },
 );
@@ -157,7 +157,7 @@ reservationSchema.pre('findOneAndDelete', async function (next) {
 
     next();
   } catch (error) {
-    next(error as AppError | CallbackError | undefined);
+    next(error as typeof AppError | CallbackError | undefined);
   }
 });
 
