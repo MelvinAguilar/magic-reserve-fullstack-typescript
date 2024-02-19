@@ -85,3 +85,33 @@ export type CartType = {
   id: string;
   quantity?: number;
 };
+
+export interface DifficultyStats {
+  _id: string;
+  numTours: number;
+  avgPrice: number;
+  minPrice: number;
+  maxPrice: number;
+  avgRating: number;
+  numRatings: number;
+}
+
+export interface ToursStats {
+  _id: null;
+  totalUsers: number;
+  totalReservations: number;
+  totalTours: number;
+  totalComments: number;
+}
+
+export interface ReservationsStats {
+  _id: null;
+  totalReservations: number;
+  maxSpent: number;
+}
+
+export interface Stats {
+  difficultyStats: DifficultyStats[];
+  toursStats: ToursStats;
+  reservationsStats: ReservationsStats;
+}
