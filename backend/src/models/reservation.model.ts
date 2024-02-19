@@ -56,6 +56,15 @@ const reservationSchema = new mongoose.Schema<
   },
 );
 
+reservationSchema.pre(/^find/, function (next) {
+  (this as Query<any, any>).populate({
+    path: 'tours.tour',
+    select: 'name imageCover',
+  });
+
+  next();
+});
+
 // Middleware to check if there are enough slots available for the tours in the reservation
 reservationSchema.pre('save', async function (next) {
   try {

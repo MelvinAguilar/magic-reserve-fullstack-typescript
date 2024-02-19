@@ -1,4 +1,5 @@
 const Tour = require('../models/tour.model');
+const Reservation = require('../models/reservation.model');
 import { sendResponse } from './../utils/apiResponse';
 import { NextFunction, Request, Response } from 'express';
 const catchAsync = require('./../utils/catchAsync');
@@ -19,35 +20,51 @@ exports.aliasTopTours = (req: Request, _res: Response, next: Function) => {
 
 exports.getTourStats = catchAsync(
   async (_req: Request, res: Response, _next: NextFunction) => {
-    const stats = await Tour.aggregate([
-      {
-        // The $match stage filters the documents to only pass those with a ratingsAverage of 4.5
-        // or higher to the next stage in the pipeline.
-        $match: { ratingsAverage: { $gte: 4.5 } },
-      },
-      {
-        // The $group stage groups the documents by the $difficulty field and calculates the
-        // average price, the minimum price, the maximum price, the average rating, and the
-        // total number of ratings for each group of documents.
-        $group: {
-          _id: '$difficulty',
-          numTours: { $sum: 1 },
-          avgPrice: { $avg: '$price' },
-          minPrice: { $min: '$price' },
-          maxPrice: { $max: '$price' },
-          avgRating: { $avg: '$ratingsAverage' },
-          numRatings: { $sum: '$ratingsQuantity' },
+    const [difficultyStats, toursStats, reservationsStats] = await Promise.all([
+      Tour.aggregate([
+        {
+          $group: {
+            _id: '$difficulty',
+            numTours: { $sum: 1 },
+            avgPrice: { $avg: '$price' },
+            minPrice: { $min: '$price' },
+            maxPrice: { $max: '$price' },
+            avgRating: { $avg: '$ratingsAverage' },
+            numRatings: { $sum: '$ratingsQuantity' },
+          },
         },
-      },
-      {
-        // The $sort stage sorts the documents by the numTours field in descending order.
-        $sort: { avgPrice: 1 },
-      },
+      ]),
+      Tour.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalUsers: { $sum: 1 }, 
+            totalReservations: { $sum: '$currentGroupSize' }, 
+            totalTours: { $sum: 1 }, 
+            totalComments: { $sum: '$ratingsQuantity' }, 
+            },
+      }
+      ]),
+      Reservation.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalReservations: { $sum: 1 },
+            maxSpent: { $max: '$total' },
+          },
+        },
+      ]),
+      
     ]);
 
-    sendResponse(res, 200, stats);
+    sendResponse(res, 200, {
+      difficultyStats,
+      toursStats: toursStats[0],
+      reservationsStats: reservationsStats[0],
+    });
   },
 );
+
 
 exports.getMonthlyPlan = catchAsync(
   async (_req: Request, res: Response, _next: NextFunction) => {
