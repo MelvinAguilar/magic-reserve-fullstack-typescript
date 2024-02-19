@@ -20,9 +20,7 @@ const getUsers = async (searchParams: {
   })
     .then((res) => {
       if (!res.ok) {
-        throw new Error(
-          "Error getting users: " + res.status + " - " + res.statusText,
-        );
+        throw new Error("Error getting users");
       }
       return res.json();
     })
@@ -45,7 +43,7 @@ export default function UsersPage({ searchParams }: SearchParamsProps) {
   const [data, setData] = useState([]);
   const { isAuthenticated, loading } = useContext(AuthContext);
 
-  useEffect(() => { 
+  useEffect(() => {
     const fetchData = async () => {
       const users = await getUsers(searchParams);
       setData(users || []);

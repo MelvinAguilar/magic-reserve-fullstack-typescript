@@ -102,7 +102,7 @@ const Page = async ({ params }: URLProps) => {
             <p>
               {tour.currentGroupSize} people are currently booked on this tour
             </p>
-            <div className="border-y border-gray-200 py-4 my-3">
+            <div className="border-y border-gray-400 py-4 my-3">
 
             <p>
               {tour.maxGroupSize - tour.currentGroupSize} spots left for this tour

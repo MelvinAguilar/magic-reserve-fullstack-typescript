@@ -55,6 +55,21 @@ export type User = {
   photo?: string;
 };
 
+export type Reservations = {
+  id: string;
+  tours: {
+    tour:{
+      id: string;
+      name: string;
+      imageCover: string;
+    };
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+  }[];
+  total: number;
+}
+
 export type AddCartType = {
   id: string;
   name: string;

@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type CheckoutValues = {
   email: string;
@@ -25,6 +26,7 @@ type CheckoutValues = {
 
 export default function Checkout() {
   const cartStore = useCartStore();
+  const router = useRouter();
 
   const totalPrice = cartStore.cart.reduce((acc, item) => {
     return acc + item.price! * item.quantity!;
@@ -50,6 +52,11 @@ export default function Checkout() {
 
     if (!token) {
       toast.error("You need to be logged in to make a reservation");
+      return;
+    }
+
+    if (cartStore.cart.length === 0) {
+      toast.error("Your cart is empty");
       return;
     }
 
@@ -83,6 +90,8 @@ export default function Checkout() {
         if (data?.status === "success") {
           toast.success("Reservation created successfully");
           cartStore.clearCart();
+          router.push("/checkout/success");
+
           return data;
         } else {
           throw new Error("Error creating reservation: " + data?.message);
@@ -331,7 +340,7 @@ export default function Checkout() {
               </div>
             </div>
 
-            <div className="mt-10 flex flex-col justify-end gap-8 border-t border-gray-200 pt-6">
+            <div className="mt-10 flex flex-col justify-end gap-4 border-t border-gray-200 pt-6">
               <Button onClick={generateRandomCheckout} type="button">
                 Generate random checkout
               </Button>
