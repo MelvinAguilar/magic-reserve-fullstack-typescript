@@ -1,12 +1,14 @@
+"use client"
+
 import Link from "next/link";
 import { IconHome, IconReservation, IconTour, IconUser } from "../Icons";
 import { usePathname } from "next/navigation";
 
 const navigation = [
-  { name: "Dashboard", href: "/Dashboard", icon: IconHome, current: true },
-  { name: "Tours", href: "#", icon: IconTour, current: false },
-  { name: "User", href: "#", icon: IconUser, current: false },
-  { name: "Reservations", href: "#", icon: IconReservation, current: false },
+  { name: "Dashboard", href: "/dashboard", icon: IconHome, current: true },
+  { name: "Tours", href: "/tours/list", icon: IconTour, current: false },
+  { name: "User", href: "/users", icon: IconUser, current: false },
+  { name: "Reservations", href: "/reservations/list", icon: IconReservation, current: false },
 ];
 
 function classNames(...classes: any) {
@@ -19,6 +21,7 @@ export default function SideBar() {
   const checkCurrent = (href: string) => {
     return pathname.toLowerCase() === href.toLowerCase();
   };
+
   return (
     <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pt-20">
       <nav className="flex flex-1 flex-col">
@@ -45,7 +48,9 @@ export default function SideBar() {
                       )}
                       aria-hidden="true"
                     />
-                    {item.name}
+                    <p className="hidden sm:block pr-8">
+                      {item.name}
+                    </p>
                   </Link>
                 </li>
               ))}

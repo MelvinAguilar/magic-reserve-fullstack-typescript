@@ -155,7 +155,11 @@ const ToursTable = ({ tours }: ToursTableProps) => {
                 <TableCell>${tour.price}</TableCell>
                 <TableCell>
                   <div className="flex items-center gap-2">
-                    <RatingStars rating={tour.ratingsAverage} small />
+                    <RatingStars
+                      rating={tour.ratingsAverage}
+                      quantity={tour.ratingsQuantity}
+                      small
+                    />
                     <p>({tour.ratingsQuantity})</p>
                   </div>
                 </TableCell>

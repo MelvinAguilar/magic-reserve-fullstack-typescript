@@ -20,7 +20,7 @@ const Page = () => {
   }
 
   return (
-    <Container>
+    <Container className="!pt-20">
       <TourForm type="create" />
     </Container>
   );

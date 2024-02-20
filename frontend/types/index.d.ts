@@ -58,7 +58,7 @@ export type User = {
 export type Reservations = {
   id: string;
   tours: {
-    tour:{
+    tour: {
       id: string;
       name: string;
       imageCover: string;
@@ -68,7 +68,7 @@ export type Reservations = {
     subtotal: number;
   }[];
   total: number;
-}
+};
 
 export type AddCartType = {
   id: string;
@@ -114,4 +114,34 @@ export interface Stats {
   difficultyStats: DifficultyStats[];
   toursStats: ToursStats;
   reservationsStats: ReservationsStats;
+}
+
+export interface Reservation {
+  _id: string;
+  user: User;
+  tours: {
+    tour: {
+      _id: string;
+      name: string;
+      guides: {
+        _id: string;
+        name: string;
+        email: string;
+        role: string;
+        photo: string;
+      }[];
+      imageCover: string;
+      durationWeeks: number;
+      id: string;
+    };
+    quantity: number;
+    unitPrice: number;
+    subtotal: number;
+    _id: string;
+    id: string;
+  }[];
+  total: number;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
 }

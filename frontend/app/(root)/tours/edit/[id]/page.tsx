@@ -49,7 +49,7 @@ const Page = ({ params }: ParamsProps) => {
   }
 
   return (
-    <Container>
+    <Container className="!pt-20">
       <TourForm type="edit" tour={data} />
     </Container>
   );

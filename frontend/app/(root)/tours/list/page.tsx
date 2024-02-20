@@ -1,3 +1,7 @@
+import { LinkComponent } from "@/components/Button";
+import { IconPlus } from "@/components/Icons";
+import { Title } from "@/components/Title";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import ToursTable from "@/components/tours/ToursTable";
 import { filtersToStringServer } from "@/lib/utils";
 import { SearchParamsProps } from "@/types";
@@ -26,7 +30,6 @@ const getTours = async (searchParams: {
     process.env.NEXT_PUBLIC_API_URL +
     "/tours?" +
     (searchParams ? filtersToStringServer(searchParams) : "");
-    
 
   const res = await fetch(url, { method: "GET" })
     .then((res) => {
@@ -45,8 +48,18 @@ export default async function TourListPage({
   const tours = await getTours(searchParams);
 
   return (
-    <div className="p-8 pt-20">
+    <DashboardLayout>
+      <div className="mb-8 flex items-center">
+        <Title as="h1">Tours List</Title>
+        <LinkComponent
+          href="/tours/create"
+          className="ml-auto flex !w-fit items-center"
+        >
+          <IconPlus className="mr-2 h-4 w-4" />
+          Create Tour
+        </LinkComponent>
+      </div>
       <ToursTable tours={tours} />
-    </div>
+    </DashboardLayout>
   );
 }

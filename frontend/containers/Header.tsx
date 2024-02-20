@@ -42,7 +42,7 @@ export function HighlightNavItem({
 }
 
 export default function Header() {
-  const { user } = useContext(AuthContext);
+  const { user,isAuthenticated } = useContext(AuthContext);
 
   return (
     <header className="b-header fixed inset-x-0 top-0 z-50 bg-white transition">
@@ -58,6 +58,10 @@ export default function Header() {
         </Link>
         <nav className="ml-auto" aria-label="Main navigation">
           <ul role="list" className="flex items-center gap-8">
+            {isAuthenticated(["admin"]) && (
+              <NavItem href="/dashboard">Dashboard</NavItem>
+            )}
+            
             <NavItem href="/tours">Tours</NavItem>
 
             <CartHeaderContainer />
