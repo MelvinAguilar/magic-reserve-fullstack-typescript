@@ -7,15 +7,21 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 const mongoSanitize = require('express-mongo-sanitize');
+const cors = require('cors')
 
 const app = express();
+
+// Enable CORS for all requests
+app.use(cors())
 
 // Set security HTTP headers
 app.use(helmet());
 
 // Development logging
-if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
+  app.use(morgan('dev'));
+}
+app.use(morgan('dev'));
 }
 
 // Rate limiter to control the number of requests from a single IP address
