@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/tours/Table";
 import useModalClose from "@/hook/useModalClose";
+import { handleApi } from "@/lib/handleApi";
 import { User } from "@/types";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -73,63 +74,23 @@ const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
     id: string,
     options: { role?: string; active?: boolean },
   ) => {
-    const token = localStorage.getItem("session");
-
-    const response = await fetch(`/api/users/`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ id, ...options }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error updating user");
-        }
-        return res.json();
-      })
-      .then((data) => {
+    await handleApi(`/users/${id}`, "PATCH", { id, ...options }).then(
+      (data) => {
         if (data?.status === "success") {
           toast.success("User updated");
           router.refresh();
-        } else {
-          toast.error("Error updating user: " + data?.message);
         }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+      },
+    );
   };
 
   const deleteUser = async (id: string) => {
-    const token = localStorage.getItem("session");
-
-    const response = await fetch(`/api/users/`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ id }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error deleting review");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("User deleted");
-          router.refresh();
-        } else {
-          toast.error("Error deleting user: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    await handleApi(`/users/${id}`, "DELETE").then((data) => {
+      if (data?.status === "success") {
+        toast.success("User deleted");
+        router.refresh();
+      }
+    });
   };
 
   const [showMenuForUser, setShowMenuForUser] = useState<string | null>(null);

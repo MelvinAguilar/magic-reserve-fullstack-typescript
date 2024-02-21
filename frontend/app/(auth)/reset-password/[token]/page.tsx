@@ -2,9 +2,9 @@
 
 import Button from "@/components/Button";
 import Input from "@/components/form/Input";
+import { handleApi } from "@/lib/handleApi";
 import { ResetPasswordSchema } from "@/validations/ResetPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -14,8 +14,6 @@ interface URLTokenProps {
 }
 
 export default function ResetPassword({ params }: URLTokenProps) {
-  const [resetSuccess, setResetSuccess] = useState(false);
-
   const {
     watch,
     register,
@@ -28,36 +26,14 @@ export default function ResetPassword({ params }: URLTokenProps) {
   const onSubmit: SubmitHandler<z.infer<typeof ResetPasswordSchema>> = async (
     data,
   ) => {
-    const response = await fetch("/api/auth/reset-password", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ token: params.token, password: data.password }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error resetting password");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("Password reset successfully");
-          return data;
-        } else {
-          throw new Error("Error resetting password: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error(err.message);
-      });
+    await handleApi("/users/reset-password/", "PATCH", {
+      token: params.token,
+      password: data.password,
+    }).then((data) => {
+      if (data?.status === "success")
+        toast.success("Password reset successfully");
+    });
   };
-
-  if (resetSuccess) {
-    return <p>Password reset successfully!</p>;
-  }
 
   return (
     <form

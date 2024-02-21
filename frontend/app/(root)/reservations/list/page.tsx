@@ -4,41 +4,10 @@ import { Title } from "@/components/Title";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import ReservationsTable from "@/components/reservations/ReservationsTable";
 import { AuthContext } from "@/context/AuthContext";
+import { getRecords } from "@/lib/handleApi";
 import { Reservation, SearchParamsProps } from "@/types";
 import { redirect } from "next/navigation";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
-import { toast } from "sonner";
-
-const getReservations = async () => {
-  const token = localStorage.getItem("session");
-
-  const res = await fetch(`/api/reservations/list`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Error getting reservations");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      if (data?.status === "success") {
-        console.log(data);
-        return data;
-      } else {
-        throw new Error("Error getting reservations: " + data?.message);
-      }
-    })
-    .catch((err) => {
-      toast.error(err.message);
-      return [];
-    });
-
-  return res?.data || [];
-};
 
 export default function ReservationsPage({ searchParams }: SearchParamsProps) {
   const [data, setData] = useState<Reservation[]>([]);
@@ -46,7 +15,7 @@ export default function ReservationsPage({ searchParams }: SearchParamsProps) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const reservations:Reservation[] = await getReservations();
+      const reservations:Reservation[] = await getRecords("/reservations");
       setData(reservations);
     };
     

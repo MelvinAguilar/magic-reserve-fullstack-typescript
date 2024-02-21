@@ -3,46 +3,16 @@
 import { Title } from "@/components/Title";
 import { GenericCard } from "@/components/cards/GenericCard";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { getRecords } from "@/lib/handleApi";
 import { formatPrice } from "@/lib/utils";
 import { Stats } from "@/types";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
-
-const getStats = async () => {
-  const token = localStorage.getItem("session");
-
-  const res = await fetch(`/api/tours/stats`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Error getting stats ");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      if (data?.status === "success") {
-        return data;
-      } else {
-        throw new Error("Error getting stats: " + data?.message);
-      }
-    })
-    .catch((err) => {
-      toast.error(err.message);
-      return [];
-    });
-
-  return res?.data || [];
-};
 
 const Page = () => {
   const [data, setData] = useState<Stats>();
   useEffect(() => {
     const fetchData = async () => {
-      const stats = await getStats();
+      const stats = await getRecords("/tours/stats");
       setData(stats);
     };
 

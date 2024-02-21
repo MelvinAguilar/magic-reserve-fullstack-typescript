@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/tours/Table";
 import useModalClose from "@/hook/useModalClose";
+import { handleApi } from "@/lib/handleApi";
 import { Tour } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -98,34 +99,12 @@ const ToursTable = ({ tours }: ToursTableProps) => {
   };
 
   const deleteTour = async (id: string) => {
-    const token = localStorage.getItem("session");
-
-    const response = await fetch(`/api/tours/`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ id }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error deleting tour");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("Tour deleted");
-          router.refresh();
-        } else {
-          toast.error("Error deleting tour: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error(err.message);
-      });
+    await handleApi(`/tours/${id}`, "DELETE").then((data) => {
+      if (data?.status === "success") {
+        toast.success("Tour deleted");
+        router.refresh();
+      }
+    });
   };
 
   if (!tours) return null;

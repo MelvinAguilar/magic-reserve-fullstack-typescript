@@ -2,6 +2,7 @@
 
 import Button from "@/components/Button";
 import Input from "@/components/form/Input";
+import { handleApi } from "@/lib/handleApi";
 import { ForgotPasswordSchema } from "@/validations/ForgotPasswordSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -46,32 +47,12 @@ export default function ForgotPassword() {
   const onSubmit: SubmitHandler<z.infer<typeof ForgotPasswordSchema>> = async (
     data,
   ) => {
-    const response = await fetch("/api/auth/forgot-password", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error sending email ");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("Email sent with password recovery instructions");
-          startTimer();
-          return data;
-        } else {
-          throw new Error("Error sending email: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error(err.message);
-      });
+    await handleApi("/users/forgot-password", "POST", data).then((data) => {
+      if (data?.status === "success") {
+        toast.success("Email sent with password recovery instructions");
+        startTimer();
+      }
+    });
   };
 
   return (

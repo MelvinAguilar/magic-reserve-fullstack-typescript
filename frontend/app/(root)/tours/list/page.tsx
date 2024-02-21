@@ -3,6 +3,7 @@ import { IconPlus } from "@/components/Icons";
 import { Title } from "@/components/Title";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import ToursTable from "@/components/tours/ToursTable";
+import { getRecords } from "@/lib/handleApi";
 import { filtersToStringServer } from "@/lib/utils";
 import { SearchParamsProps } from "@/types";
 
@@ -26,20 +27,10 @@ const getTours = async (searchParams: {
     }
   }
 
-  const url =
-    process.env.NEXT_PUBLIC_API_URL +
-    "/tours?" +
-    (searchParams ? filtersToStringServer(searchParams) : "");
-
-  const res = await fetch(url, { method: "GET" })
-    .then((res) => {
-      return res.json();
-    })
-    .catch((err) => {
-      return [];
-    });
-
-  return res?.data || [];
+  const tourList = await getRecords(
+    "/tours?" + (searchParams ? filtersToStringServer(searchParams) : ""),
+  );
+  return tourList;
 };
 
 export default async function TourListPage({

@@ -1,6 +1,7 @@
 "use client";
 
 import Input from "@/components/form/Input";
+import { handleApi } from "@/lib/handleApi";
 import {
   CloudinaryResource,
   UploadMultipleCloudImages,
@@ -125,7 +126,6 @@ const TourForm = ({ type, tour }: TourFormProps) => {
         return [];
       });
 
-
     if (images.length === 0) return;
 
     let imageCover;
@@ -145,7 +145,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
       description,
       startLocation,
       locations,
-      startDates
+      startDates,
     } = data;
 
     const body = {
@@ -163,39 +163,16 @@ const TourForm = ({ type, tour }: TourFormProps) => {
       imageCover: imageCover || coverUrl,
       images: type === "create" ? images : imageUrls.concat(images),
     };
-    const token = localStorage.getItem("session");
 
-    fetch(`/api/tours`, {
-      method: type === "create" ? "POST" : "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error(
-            `Error ${type === "create" ? "creating" : "updating"} tour`,
-          );
-        }
-        return res.json();
-      })
-
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success(`Tour ${type === "create" ? "created" : "updated"}`);
-        } else {
-          toast.error(
-            `Error ${type === "create" ? "creating" : "updating"} tour: ${data?.message}`,
-          );
-        }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    await handleApi(
+      "/tours" + (type === "create" ? "" : `/${tour?.id}`),
+      type === "create" ? "POST" : "PATCH",
+      body,
+    ).then((data) => {
+      if (data?.status === "success")
+        toast.success(`Tour ${type === "create" ? "created" : "updated"}`);
+    });
   };
-  
 
   const [numDestinations, setNumDestinations] = useState(1);
 
@@ -212,7 +189,9 @@ const TourForm = ({ type, tour }: TourFormProps) => {
       className="grid rounded-lg bg-white p-8 shadow-lg md:grid-cols-2 md:gap-x-8"
     >
       <div className="md:col-span-2">
-        <Title as="h1" className="mb-8 text-3xl font-bold">Create a new tour</Title>
+        <Title as="h1" className="mb-8 text-3xl font-bold">
+          Create a new tour
+        </Title>
       </div>
       <div>
         <Input
@@ -247,7 +226,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
         </label>
         <select
           id="difficulty"
-          className="border-primary-light bg-light mt-8 w-full rounded-lg border px-3 py-4"
+          className="mt-8 w-full rounded-lg border border-primary-light bg-light px-3 py-4"
           {...register("difficulty")}
           aria-invalid={errors.difficulty ? "true" : "false"}
         >
@@ -307,7 +286,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
         />
       </div>
 
-      <div className="bg-primary/5 mt-8 rounded-lg p-4 md:col-span-2">
+      <div className="mt-8 rounded-lg bg-primary/5 p-4 md:col-span-2">
         <p className="mb-4">Start Location</p>
         <div className="grid grid-cols-2 gap-x-4">
           <div>
@@ -360,7 +339,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
         </label>
         <select
           id="numDestinations"
-          className="border-primary-light bg-light w-full rounded-lg border px-3 py-4"
+          className="w-full rounded-lg border border-primary-light bg-light px-3 py-4"
           value={numDestinations}
           onChange={handleNumDestinationsChange}
         >
@@ -375,7 +354,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
       {[...Array(numDestinations)].map((_, index) => (
         <div
           key={index}
-          className="bg-primary/5 mt-8 rounded-lg p-4 md:col-span-2"
+          className="mt-8 rounded-lg bg-primary/5 p-4 md:col-span-2"
         >
           <h2 className="my-4 text-xl font-semibold">
             Destination {index + 1}
@@ -437,7 +416,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
               />
             </div>
 
-             <div className="col-span-2">
+            <div className="col-span-2">
               <Input
                 innerRef={register(`startDates.${index}`)}
                 name={`location-day-${index}`}
@@ -463,7 +442,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
         {imageUrls.map((url, index) => (
           <div
             key={index}
-            className="border-primary/80 flex w-full flex-wrap gap-4 border-2 border-dashed bg-gray-50 p-4"
+            className="flex w-full flex-wrap gap-4 border-2 border-dashed border-primary/80 bg-gray-50 p-4"
           >
             <Image
               src={url}
@@ -481,14 +460,14 @@ const TourForm = ({ type, tour }: TourFormProps) => {
 
             <button
               type="button"
-              className="bg-primary/80 ml-auto h-fit rounded-lg px-4 py-2 text-white"
+              className="ml-auto h-fit rounded-lg bg-primary/80 px-4 py-2 text-white"
               onClick={() => handleSetCover(url)}
             >
               Set as Cover
             </button>
             <button
               type="button"
-              className="border-primary text-primary h-fit rounded-lg border px-4 py-2"
+              className="h-fit rounded-lg border border-primary px-4 py-2 text-primary"
               onClick={() => handleRemoveImage(url)}
             >
               Remove
@@ -499,7 +478,7 @@ const TourForm = ({ type, tour }: TourFormProps) => {
 
       <button
         type="submit"
-        className="bg-primary hover:bg-primary-light mt-8 rounded-lg px-10 py-3 font-poly text-white transition-all"
+        className="mt-8 rounded-lg bg-primary px-10 py-3 font-poly text-white transition-all hover:bg-primary-light"
       >
         Create tour
       </button>

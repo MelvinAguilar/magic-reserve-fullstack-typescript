@@ -4,14 +4,15 @@ import Button from "@/components/Button";
 import { Container } from "@/components/Container";
 import { Title } from "@/components/Title";
 import Input from "@/components/form/Input";
+import { handleApi } from "@/lib/handleApi";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/store/store";
 import { CheckoutSchema } from "@/validations/CheckoutSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 type CheckoutValues = {
   email: string;
@@ -47,14 +48,6 @@ export default function Checkout() {
 
   const onSubmit: SubmitHandler<CheckoutValues> = async (data) => {
     // The data from the form is not used in this page
-
-    const token = localStorage.getItem("session");
-
-    if (!token) {
-      toast.error("You need to be logged in to make a reservation");
-      return;
-    }
-
     if (cartStore.cart.length === 0) {
       toast.error("Your cart is empty");
       return;
@@ -72,51 +65,47 @@ export default function Checkout() {
       total: totalPrice + totalPrice * 0.1,
     };
 
-    await fetch("/api/reservations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(reservation),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error creating reservation");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("Reservation created successfully");
-          cartStore.clearCart();
-          router.push("/checkout/success");
-
-          return data;
-        } else {
-          throw new Error("Error creating reservation: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        toast.error(err.message);
-      });
+    await handleApi("/reservations", "POST", reservation).then((data) => {
+      if (data?.status === "success") {
+        toast.success("Reservation created successfully");
+        cartStore.clearCart();
+        router.push("/checkout/success");
+      }
+    });
   };
 
   const generateRandomCheckout = () => {
     const date = new Date();
     const month = date.getMonth() + 1;
-    const year = date.getFullYear().toString().substring(2); 
+    const year = date.getFullYear().toString().substring(2);
 
-    setValue("email", Math.random().toString(36).substring(2, 9) + "@gmail.com");
-    setValue("cardNumber", Math.floor(Math.random() * 1e16).toString().padStart(16, '0'));
-    setValue("expirationDate", month.toString().padStart(2, '0') + "/" + year);
-    setValue("cvc", Math.floor(Math.random() * 1e3).toString().padStart(3, '0'));
+    setValue(
+      "email",
+      Math.random().toString(36).substring(2, 9) + "@gmail.com",
+    );
+    setValue(
+      "cardNumber",
+      Math.floor(Math.random() * 1e16)
+        .toString()
+        .padStart(16, "0"),
+    );
+    setValue("expirationDate", month.toString().padStart(2, "0") + "/" + year);
+    setValue(
+      "cvc",
+      Math.floor(Math.random() * 1e3)
+        .toString()
+        .padStart(3, "0"),
+    );
     setValue("address", Math.random().toString(36).substring(2, 9));
     setValue("city", Math.random().toString(36).substring(2, 9));
     setValue("region", Math.random().toString(36).substring(2, 9));
-    setValue("postalCode", Math.floor(Math.random() * 1e5).toString().padStart(5, '0'));
-}
+    setValue(
+      "postalCode",
+      Math.floor(Math.random() * 1e5)
+        .toString()
+        .padStart(5, "0"),
+    );
+  };
 
   return (
     <Container className=" grid !p-0 lg:grid-cols-2 ">
@@ -177,11 +166,10 @@ export default function Checkout() {
       </section>
 
       <section className="px-8 py-16 pt-20 lg:col-start-1 lg:row-start-1">
-
         <h2 className="sr-only">Payment and shipping details</h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className=" max-w-2xl px-4 lg:px-0">
+          <div className="px-4 lg:px-0">
             <div>
               <Title as="h2" small>
                 Contact information

@@ -4,46 +4,13 @@ import { GenericCard } from "@/components/cards/GenericCard";
 import AddCartButton from "@/components/cart/AddCartButton";
 import RatingStars from "@/components/reviews/RatingStars";
 import Reviews from "@/components/reviews/Reviews";
+import { getRecords } from "@/lib/handleApi";
 import { Tour, URLProps } from "@/types";
 import Image from "next/image";
-import { toast } from "sonner";
-
-const getTour = async (id: string) => {
-  const url = process.env.NEXT_PUBLIC_API_URL + "/tours/" + id;
-
-  const res = await fetch(url, { cache: "no-store" })
-    .then(async (res) => {
-      const data = await res.json();
-      return data;
-    })
-    .catch((err) => {
-      toast.error("Error fetching tour");
-      console.error(err);
-    });
-
-  return res?.data || [];
-};
-
-const getReviews = async (id: string) => {
-  const url = process.env.NEXT_PUBLIC_API_URL + "/tours/" + id + "/reviews";
-
-  const res = await fetch(url, { method: "GET", cache: "no-store" })
-    .then(async (res) => {
-      const data = await res.json();
-      return data;
-    })
-    .then((data) => {
-      return data;
-    })
-    .catch((err) => {
-      toast.error("Error fetching reviews");
-    });
-  return res?.data || [];
-};
 
 const Page = async ({ params }: URLProps) => {
   const { id } = params;
-  const tour: Tour = await getTour(id);
+  const tour: Tour = await getRecords( "/tours/" + id);
 
   if (!tour) {
     return <p>Loading...</p>;

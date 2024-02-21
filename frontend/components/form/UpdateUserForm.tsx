@@ -3,6 +3,7 @@
 import Button from "@/components/Button";
 import Input from "@/components/form/Input";
 import { AuthContext } from "@/context/AuthContext";
+import { handleApi } from "@/lib/handleApi";
 import { CloudinaryResource, getCloudImage } from "@/lib/uploadImage";
 import { UserSchema } from "@/validations/UserSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -48,45 +49,20 @@ const UpdateUserForm = ({ userId }: { userId: string }) => {
     },
   });
 
-  const onSubmit: SubmitHandler<UserValues> = (data) => {
-    const token = localStorage.getItem("session");
-
-    if (!token) {
-      toast.error("No token found");
-      return;
-    }
-
+  const onSubmit: SubmitHandler<UserValues> = async (data) => {
     const { name, email } = data;
 
     const photo = resource?.secure_url || user?.photo;
 
     const body = JSON.stringify({ name, email, photo });
 
-    fetch(`/api/users/me`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body,
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error updating user");
-        }
-
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("User updated");
-        } else {
-          toast.error("Error updating user: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    await handleApi(`/users/update-me`, "PATCH", body).then((data) => {
+      if (data?.status === "success") {
+        toast.success("User updated");
+      } else {
+        toast.error("Error updating user: " + data?.message);
+      }
+    });
   };
 
   return (
@@ -112,7 +88,7 @@ const UpdateUserForm = ({ userId }: { userId: string }) => {
         Upload a new photo <span className="">(optional)</span>
       </p>
 
-      <div className="flex items-center justify-center gap-8 mb-8">
+      <div className="mb-8 flex items-center justify-center gap-8">
         {resource && resource.public_id ? (
           <Image
             src={resource.secure_url}
@@ -122,7 +98,7 @@ const UpdateUserForm = ({ userId }: { userId: string }) => {
             className="aspect-square rounded-full object-cover"
           />
         ) : (
-          <div className="flex h-[13.75rem] w-[13.75rem] aspect-square items-center justify-center rounded-full bg-gray-200">
+          <div className="flex aspect-square h-[13.75rem] w-[13.75rem] items-center justify-center rounded-full bg-gray-200">
             <p>No image</p>
           </div>
         )}

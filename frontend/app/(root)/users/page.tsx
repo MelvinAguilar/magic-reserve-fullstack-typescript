@@ -4,42 +4,10 @@ import { Title } from "@/components/Title";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import UsersTable from "@/components/users/UsersTable";
 import { AuthContext } from "@/context/AuthContext";
+import { getRecords } from "@/lib/handleApi";
 import { SearchParamsProps } from "@/types";
 import { redirect } from "next/navigation";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
-import { toast } from "sonner";
-
-const getUsers = async (searchParams: {
-  [key: string]: string | undefined;
-}) => {
-  const token = localStorage.getItem("session");
-
-  const res = await fetch(`/api/users`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Error getting users");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      if (data?.status === "success") {
-        return data;
-      } else {
-        throw new Error("Error getting users: " + data?.message);
-      }
-    })
-    .catch((err) => {
-      toast.error(err.message);
-      return [];
-    });
-
-  return res?.data || [];
-};
 
 export default function UsersPage({ searchParams }: SearchParamsProps) {
   const [data, setData] = useState([]);
@@ -47,7 +15,7 @@ export default function UsersPage({ searchParams }: SearchParamsProps) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const users = await getUsers(searchParams);
+      const users = await getRecords("/users");
       setData(users || []);
     };
 

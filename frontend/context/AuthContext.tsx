@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import fetchData, { postData } from "@/lib/apiUtils";
 import { User } from "@/types";
+import { deleteCookie, getCookie, setCookie } from "cookies-next";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface AuthContextProps {
   user: User | null;
@@ -31,105 +33,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("session");
-
-      if (token && token !== "undefined") {
-        setLoading(true);
-
-        await fetch("/api/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((res) => {
-            if (res.ok) {
-              return res.json();
-            }
-            return null;
-          })
-          .then((data) => {
-            if (data?.status === "success") {
-              const user = data.data;
-              setUser(user);
-            }
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+    const fetchUserData = async () => {
+      setLoading(true);
+      try {
+        const token = getCookie("session");
+        if (token && token !== "undefined") {
+          const data = await fetchData("/users/me");
+          setUser(data.data);
+        }
+      } catch (error) {
+        toast.error((error as Error).message);
       }
+      setLoading(false);
     };
 
-    fetchData();
+    fetchUserData();
   }, []);
 
   const login = async (email: string, password: string) => {
     setLoading(true);
+    try {
+      const data = await postData("/users/login", { email, password });
+      const response = data.data;
 
-    const res = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+      const user = response.data.user;
+      const token = response.token;
 
-    if (res.ok) {
-      const data = await res.json();
+      setCookie("session", token);
+      setUser(user);
 
-      if (data?.status === "success") {
-        const responseData = data.data;
-        localStorage.setItem("session", responseData.token);
-
-        const user = responseData.data.user;
-        setUser(user);
-
-        toast.success("Welcome back!");
-        router.push("/");
-      } else {
-        toast.error(data?.message || "Error in login");
-      }
-    } else {
-      toast.error("Error in login");
+      toast.success("Welcome back!");
+      router.push("/");
+    } catch (error) {
+      toast.error((error as Error).message);
     }
-
     setLoading(false);
   };
 
   const register = async (name: string, email: string, password: string) => {
     setLoading(true);
+    try {
+      const data = await postData("/users/signup", { name, email, password });
+      const user = data.data.data.user;
+      setUser(user);
 
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      if (data?.status === "success") {
-        const responseData = data.data;
-        localStorage.setItem("session", responseData.token);
-
-        const user = responseData.data.user;
-        setUser(user);
-
-        toast.success("Welcome!");
-        router.push("/");
-      } else {
-        toast.error(data?.message || "Error in register");
-      }
-    } else {
-      toast.error("Error in register");
+      toast.success("Welcome!");
+      router.push("/");
+    } catch (error) {
+      toast.error((error as Error).message);
     }
-
     setLoading(false);
   };
 
   const logout = () => {
-    localStorage.removeItem("session");
+    deleteCookie("session");
     setUser(null);
   };
 

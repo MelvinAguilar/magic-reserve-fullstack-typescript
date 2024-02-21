@@ -2,6 +2,7 @@
 
 import Input from "@/components/form/Input";
 import { AuthContext } from "@/context/AuthContext";
+import { handleApi } from "@/lib/handleApi";
 import { ReviewSchema } from "@/validations/ReviewSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -11,8 +12,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { StarFilledIcon } from "../Icons";
 import Modal from "../Modal";
-import Comment from "./Comment";
 import { Title } from "../Title";
+import Comment from "./Comment";
 
 interface ReviewsProps {
   reviews: any;
@@ -36,51 +37,21 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
   });
 
   const deleteComment = async (id: string) => {
-    const token = localStorage.getItem("session");
-    if (!token) {
-      toast.error("You need to be logged in to delete a review");
-      return;
-    }
-
-    const review = await fetch("/api/reviews/", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ id }),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error deleting review");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("Review deleted");
-          reset();
-          setRating(-1);
-          router.refresh();
-        } else {
-          toast.error("Error deleting review: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    await handleApi(`/reviews/` + id, "DELETE").then((data) => {
+      if (data?.status === "success") {
+        toast.success("Review deleted");
+        reset();
+        setRating(-1);
+        router.refresh();
+      } else {
+        toast.error("Error deleting review: " + data?.message);
+      }
+    });
   };
 
   const onSubmit: SubmitHandler<z.infer<typeof ReviewSchema>> = async (
     data,
   ) => {
-    const token = localStorage.getItem("session");
-
-    if (!token) {
-      toast.error("You need to be logged in to submit a review");
-      return;
-    }
-
     const method = isEditing ? "PATCH" : "POST";
 
     const body = isEditing
@@ -96,38 +67,20 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
           user: user?._id,
         };
 
-    const review = await fetch("/api/reviews", {
-      method: method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    })
-      .then((res) => {
-        if (res.ok) {
-          return res.json();
-        }
-        return null;
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success(isEditing ? "Review updated" : "Review submitted");
-          setIsEditing(false);
-          setRating(-1);
-          reset();
-          setSelectedCommentId("");
-          router.refresh();
-        } else {
-          const errorMessage = isEditing
-            ? "Error updating review: " + data?.message
-            : "Error submitting review: " + data?.message;
-          toast.error(errorMessage);
-        }
-      })
-      .catch((err) => {
-        toast.error("Error submitting review");
-      });
+    await handleApi(
+      `/reviews/` + (isEditing ? selectedCommentId : ""),
+      method,
+      body,
+    ).then((data) => {
+      if (data?.status === "success") {
+        toast.success(isEditing ? "Review updated" : "Review submitted");
+        setIsEditing(false);
+        setRating(-1);
+        reset();
+        setSelectedCommentId("");
+        router.refresh();
+      }
+    });
   };
 
   // Default values for the form

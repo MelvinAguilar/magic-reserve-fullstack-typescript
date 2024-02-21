@@ -29,7 +29,7 @@ export default function SignUp() {
       toast.error("You are already logged in");
       router.push("/");
     }
-  }, [user]);
+  }, []);
 
   const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = (data) => {
     signup(data.name, data.email, data.password);

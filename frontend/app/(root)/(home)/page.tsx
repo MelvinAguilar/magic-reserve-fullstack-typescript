@@ -2,23 +2,11 @@ import { Container } from "@/components/Container";
 import { Title } from "@/components/Title";
 import { TestimonialContainer } from "@/components/home/Testimonial";
 import ToursShowcase from "@/components/home/ToursShowcase";
+import { getRecords } from "@/lib/handleApi";
 import Image from "next/image";
 
-const getTours = async () => {
-  const url = process.env.NEXT_PUBLIC_API_URL + "/tours?limit=6";
-  const res = await fetch(url, { method: "GET" })
-    .then((res) => {
-      return res.json();
-    })
-    .catch((err) => {
-      console.error(err);
-      return [];
-    });
-  return res?.data || [];
-};
-
 export default async function Home() {
-  const tours = await getTours();
+  const tours = await getRecords("/tours?limit=6");
 
   return (
     <main id="main">

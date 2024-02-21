@@ -23,7 +23,7 @@ export default function SideBar() {
   };
 
   return (
-    <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pt-20">
+    <div className="flex grow flex-col max-w-[400px] w-full gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pt-20">
       <nav className="flex flex-1 flex-col">
         <ul role="list" className="flex flex-1 flex-col gap-y-7">
           <li>
@@ -48,7 +48,7 @@ export default function SideBar() {
                       )}
                       aria-hidden="true"
                     />
-                    <p className="hidden sm:block pr-8">
+                    <p className="hidden sm:block">
                       {item.name}
                     </p>
                   </Link>

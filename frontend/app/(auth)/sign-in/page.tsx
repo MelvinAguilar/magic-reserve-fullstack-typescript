@@ -30,7 +30,7 @@ export default function SignIn() {
       toast.error("You are already logged in");
       router.push("/");
     }
-  }, [user]);
+  }, []);
 
   const onSubmit: SubmitHandler<z.infer<typeof LoginSchema>> = (data) => {
     login(data.email, data.password);

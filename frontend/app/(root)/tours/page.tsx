@@ -1,6 +1,7 @@
 import { Container } from "@/components/Container";
 import ToursShowcase from "@/components/home/ToursShowcase";
 import Filters from "@/components/tours/Filters";
+import { getRecords } from "@/lib/handleApi";
 import { filtersToStringServer } from "@/lib/utils";
 
 interface SearchParamsProps {
@@ -27,21 +28,10 @@ const getTours = async (searchParams: {
     }
   }
 
-  const url =
-    process.env.NEXT_PUBLIC_API_URL +
-    "/tours?" +
-    (searchParams ? filtersToStringServer(searchParams) : "");
-
-  const res = await fetch(url, { method: "GET" })
-    .then((res) => {
-      return res.json();
-    })
-    .catch((err) => {
-      console.error(err);
-      return [];
-    });
-
-  return res?.data || [];
+  const tourList = await getRecords(
+    "/tours?" + (searchParams ? filtersToStringServer(searchParams) : ""),
+  );
+  return tourList;
 };
 
 export default async function ToursPage({ searchParams }: SearchParamsProps) {

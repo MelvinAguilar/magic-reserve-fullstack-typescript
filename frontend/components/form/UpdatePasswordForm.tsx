@@ -1,6 +1,7 @@
 "use client";
 
 import Input from "@/components/form/Input";
+import { handleApi } from "@/lib/handleApi";
 import { PasswordUpdateSchema } from "@/validations/UserSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -21,43 +22,14 @@ const UpdatePasswordForm = () => {
     resolver: zodResolver(PasswordUpdateSchema),
   });
 
-  const onSubmit: SubmitHandler<PasswordValues> = (data) => {
-    const token = localStorage.getItem("session");
-
-    if (!token) {
-      toast.error("No token found");
-      return;
-    }
-
+  const onSubmit: SubmitHandler<PasswordValues> = async (data) => {
     const { password, passwordCurrent } = data;
 
     const body = JSON.stringify({ password, passwordCurrent });
 
-    fetch("/api/users/update-password", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body,
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error updating password");
-        }
-
-        return res.json();
-      })
-      .then((data) => {
-        if (data?.status === "success") {
-          toast.success("Password updated");
-        } else {
-          toast.error("Error updating password: " + data?.message);
-        }
-      })
-      .catch((err) => {
-        toast.error(err.message);
-      });
+    await handleApi("/users/update-password", "PATCH", body).then((data) => {
+      if (data?.status === "success") toast.success("Password updated");
+    });
   };
 
   return (
@@ -82,7 +54,7 @@ const UpdatePasswordForm = () => {
 
       <button
         type="submit"
-        className="bg-primary hover:bg-primary-light mt-8 rounded-lg px-24 py-3 font-poly text-white transition-all"
+        className="mt-8 rounded-lg bg-primary px-24 py-3 font-poly text-white transition-all hover:bg-primary-light"
       >
         Save
       </button>

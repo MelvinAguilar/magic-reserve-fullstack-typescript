@@ -1,47 +1,17 @@
 "use client";
 
+import { getRecords } from "@/lib/handleApi";
 import { Reservations } from "@/types";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 import { Title } from "../Title";
 import ReservationCard from "./ReservationCard";
-
-const getReservations = async () => {
-  const token = localStorage.getItem("session");
-
-  const res = await fetch(`/api/reservations`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("Error getting reservations");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      if (data?.status === "success") {
-        return data;
-      } else {
-        throw new Error("Error getting reservations: " + data?.message);
-      }
-    })
-    .catch((err) => {
-      toast.error(err.message);
-      return [];
-    });
-
-  return res?.data || [];
-};
 
 export default function ReservationContainer() {
   const [data, setData] = useState<Reservations[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
-      const users = await getReservations();
+      const users = await getRecords("/reservations/my-reservations/");
       setData(users || []);
     };
 
