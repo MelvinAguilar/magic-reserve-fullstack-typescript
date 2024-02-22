@@ -1,6 +1,7 @@
 "use client";
 
 import { LinkComponent } from "@/components/Button";
+import Loading from "@/components/Loading";
 import ReservationContainer from "@/components/reservations/ReservationContainer";
 import { AuthContext } from "@/context/AuthContext";
 import Image from "next/image";
@@ -10,13 +11,7 @@ import { useContext } from "react";
 const Page = () => {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
 
   if (!user) {
     return (

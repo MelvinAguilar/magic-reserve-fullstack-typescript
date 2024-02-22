@@ -17,6 +17,7 @@ import React, { useState } from "react";
 import { toast } from "sonner";
 import Modal from "../Modal";
 import RatingStars from "../reviews/RatingStars";
+import NoResult from "../NoResult";
 
 interface DifficultyLabelProps {
   difficulty: string;
@@ -107,7 +108,14 @@ const ToursTable = ({ tours }: ToursTableProps) => {
     });
   };
 
-  if (!tours) return null;
+  if (!tours) {
+    return (
+      <NoResult
+        title="No tours found"
+        description="We couldn't find any tours"
+      />
+    );
+  }
 
   return (
     <>

@@ -1,6 +1,7 @@
 "use client";
 
 import { Container } from "@/components/Container";
+import Loading from "@/components/Loading";
 import UpdatePasswordForm from "@/components/form/UpdatePasswordForm";
 import UpdateUserForm from "@/components/form/UpdateUserForm";
 import { AuthContext } from "@/context/AuthContext";
@@ -10,13 +11,7 @@ import { useContext } from "react";
 const Page = () => {
   const { user, loading } = useContext(AuthContext);
 
-  if (loading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
+  if (loading) return <Loading />;
 
   if (!user) {
     return (

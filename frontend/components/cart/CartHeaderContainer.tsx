@@ -2,15 +2,22 @@
 
 import { ShoppingBagIcon } from "@/components/Icons";
 import Cart from "@/components/cart/Cart";
-import { useCartStore } from "@/store/store";
-import { AuthContext } from "@/context/AuthContext";
 import useModalClose from "@/hook/useModalClose";
-import Image from "next/image";
-import Link from "next/link";
+import { useCartStore } from "@/store/store";
 import { usePathname } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-const CartHeaderContainer = () => {
+type CartHeaderContainerProps<T extends React.ElementType> = {
+  as?: T;
+  className?: string;
+};
+
+export function  CartHeaderContainer <T extends React.ElementType = "li">({
+  as,
+  className = "",
+}: Omit<React.ComponentPropsWithoutRef<T>, keyof CartHeaderContainerProps<T>> &
+  CartHeaderContainerProps<T>) {
+  let Component = as ?? "li";
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   useModalClose(setIsOpen, ".dropdown-cart");
@@ -23,7 +30,7 @@ const CartHeaderContainer = () => {
   const cartStore = useCartStore();
 
   return (
-    <li className="relative">
+    <Component className={`relative ${className}`}>
       <button
          onClick={() => setIsOpen(!isOpen)}
         className="dropdown-cart group flex items-center"
@@ -34,7 +41,7 @@ const CartHeaderContainer = () => {
         </span>
       </button>
       <Cart isOpen={isOpen} />
-    </li>
+    </Component>
   );
 };
 

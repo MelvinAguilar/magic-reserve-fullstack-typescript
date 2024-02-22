@@ -11,7 +11,7 @@ export default async function Home() {
   return (
     <main id="main">
       <Container as="section" className="grid">
-        <div className="column-1 grid min-h-screen items-center">
+        <div className="column-1 grid h-screen max-h-[1440px] items-center">
           <h1 className="font-title font-poly leading-none">
             Create your own adventure, live your story.
           </h1>
@@ -26,7 +26,7 @@ export default async function Home() {
       </Container>
 
       <Container as="section" className="grid !py-16">
-        <div className="items-center gap-16 lg:grid lg:grid-cols-2">
+        <div className="items-center gap-16 md:grid md:grid-cols-2">
           <div className="grid grid-cols-2 gap-4">
             <Image
               className="w-full rounded-lg"
@@ -44,7 +44,9 @@ export default async function Home() {
             />
           </div>
           <div>
-            <Title className="mb-4">Elevate Your Journey with Us</Title>
+            <Title className="mb-4 mt-8 md:mt-0">
+              Elevate Your Journey with Us
+            </Title>
             <p className="mb-4">
               Unleash the full potential of your adventure with our meticulously
               planned itineraries. Each journey is thoughtfully curated to

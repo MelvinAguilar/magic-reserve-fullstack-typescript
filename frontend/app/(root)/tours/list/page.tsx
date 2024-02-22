@@ -1,11 +1,18 @@
+"use client";
+
 import { LinkComponent } from "@/components/Button";
 import { IconPlus } from "@/components/Icons";
+import Loading from "@/components/Loading";
+import NoResult from "@/components/NoResult";
 import { Title } from "@/components/Title";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import ToursTable from "@/components/tours/ToursTable";
+import { AuthContext } from "@/context/AuthContext";
 import { getRecords } from "@/lib/handleApi";
 import { filtersToStringServer } from "@/lib/utils";
-import { SearchParamsProps } from "@/types";
+import { SearchParamsProps, Tour } from "@/types";
+import { redirect } from "next/navigation";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
 
 const getTours = async (searchParams: {
   [key: string]: string | undefined;
@@ -33,15 +40,31 @@ const getTours = async (searchParams: {
   return tourList;
 };
 
-export default async function TourListPage({
-  searchParams,
-}: SearchParamsProps) {
-  const tours = await getTours(searchParams);
+export default function TourListPage({ searchParams }: SearchParamsProps) {
+  const { isAuthenticated, loading } = useContext(AuthContext);
+  const [data, setData] = useState<Tour[]>([]);
+
+  useLayoutEffect(() => {
+    if (!loading && !isAuthenticated(["admin"])) {
+      redirect("/unauthorized");
+    }
+  }, [isAuthenticated, loading]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const stats = await getTours(searchParams);
+      setData(stats);
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) return <Loading />;
 
   return (
     <DashboardLayout>
       <div className="mb-8 flex items-center">
-        <Title as="h1">Tours List</Title>
+        <Title as="h1">Tours Stats by Difficulty</Title>
         <LinkComponent
           href="/tours/create"
           className="ml-auto flex !w-fit items-center"
@@ -50,7 +73,9 @@ export default async function TourListPage({
           Create Tour
         </LinkComponent>
       </div>
-      <ToursTable tours={tours} />
+      <div className="overflow-x-auto">
+        <ToursTable tours={data} />
+      </div>
     </DashboardLayout>
   );
 }

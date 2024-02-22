@@ -1,5 +1,7 @@
 "use client";
 
+import Loading from "@/components/Loading";
+import NoResult from "@/components/NoResult";
 import { Title } from "@/components/Title";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import UsersTable from "@/components/users/UsersTable";
@@ -10,8 +12,8 @@ import { redirect } from "next/navigation";
 import { useContext, useEffect, useLayoutEffect, useState } from "react";
 
 export default function UsersPage({ searchParams }: SearchParamsProps) {
-  const [data, setData] = useState([]);
   const { isAuthenticated, loading } = useContext(AuthContext);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,24 +30,24 @@ export default function UsersPage({ searchParams }: SearchParamsProps) {
     }
   }, [isAuthenticated, loading]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <Loading />;
 
-  if (!data) {
+  if (!data)
     return (
-      <div className="p-8 pt-20">
-        <h1>No users found</h1>
-      </div>
+      <NoResult
+        title="No users found"
+        description="We couldn't find any users"
+      />
     );
-  }
 
   return (
     <DashboardLayout>
       <Title as="h1" className="mb-8">
-        Users List
+        User List
       </Title>
-      <UsersTable users={data} />
+      <div className="overflow-x-auto">
+        <UsersTable users={data} />
+      </div>
     </DashboardLayout>
   );
 }

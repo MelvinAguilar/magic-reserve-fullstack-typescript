@@ -1,5 +1,7 @@
 "use client";
 
+import Loading from "@/components/Loading";
+import NoResult from "@/components/NoResult";
 import { Title } from "@/components/Title";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import ReservationsTable from "@/components/reservations/ReservationsTable";
@@ -15,10 +17,10 @@ export default function ReservationsPage({ searchParams }: SearchParamsProps) {
 
   useEffect(() => {
     const fetchData = async () => {
-      const reservations:Reservation[] = await getRecords("/reservations");
+      const reservations: Reservation[] = await getRecords("/reservations");
       setData(reservations);
     };
-    
+
     fetchData();
   }, [searchParams]);
   useLayoutEffect(() => {
@@ -27,24 +29,25 @@ export default function ReservationsPage({ searchParams }: SearchParamsProps) {
     }
   }, [isAuthenticated, loading]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <Loading />;
 
   if (!data) {
     return (
-      <div className="p-8 pt-20">
-        <h1>No Reservations found</h1>
-      </div>
+      <NoResult
+        title="No reservations found"
+        description="We couldn't find any reservations"
+      />
     );
   }
 
   return (
     <DashboardLayout>
       <Title as="h1" className="mb-8">
-        Reservations List
+        Reservation List
       </Title>
-      <ReservationsTable reservations={data} />
+      <div className="overflow-x-auto">
+        <ReservationsTable reservations={data} />
+      </div>
     </DashboardLayout>
   );
 }

@@ -31,7 +31,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
   const [filterShow, setFilterShow] = useState(false);
 
   const defaultValues: FiltersValues = {
-    name: searchParams.title || "",
+    name: searchParams.name || "",
     difficulty: searchParams.difficulty || "",
     priceFrom: searchParams["price[gte]"]
       ? parseInt(searchParams["price[gte]"])
@@ -42,7 +42,9 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
     rating: searchParams["ratingsAverage[gte]"]
       ? parseInt(searchParams["ratingsAverage[gte]"])
       : null,
-    duration: searchParams.duration || "",
+    duration: searchParams["duration[lte]"]
+      ? (parseInt(searchParams["duration[lte]"]) / 7).toString()
+      : "",
     maxGroupSize: searchParams.maxGroupSize
       ? parseInt(searchParams.maxGroupSize)
       : null,
@@ -80,7 +82,11 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
       delete filters.rating;
     }
 
-    const newUrl = applyTourFilters(filters);
+    const newUrl = applyTourFilters({
+      ...filters,
+      page: searchParams.page || null,
+      limit: searchParams.limit || null,
+    });
     router.push(newUrl, { scroll: false });
   };
 
@@ -106,17 +112,17 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
       onInvalid={handleInvalid}
       className="w-full lg:mt-12"
     >
-      <div className="border-primary-light grid w-full gap-y-4 rounded-lg border bg-white p-3 lg:grid-cols-9 lg:gap-x-3">
+      <div className="grid w-full gap-y-4 rounded-lg border border-primary-light bg-white p-3 lg:grid-cols-9 lg:gap-x-3">
         <div className="relative lg:col-span-5">
           <input
             type="text"
-            className="border-primary-light bg-light w-full rounded-lg border py-4 pl-10 pr-2 text-sm"
+            className="w-full rounded-lg border border-primary-light bg-light py-4 pl-10 pr-2 text-sm"
             placeholder="Search for tours"
             aria-label="Search for tours"
             {...register("name")}
             aria-invalid={errors.name ? "true" : "false"}
           />
-          <SmallPinIcon className="text-primary-light absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform" />
+          <SmallPinIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-primary-light" />
         </div>
 
         <div className="lg:col-span-2">
@@ -125,10 +131,10 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
           </label>
           <select
             id="difficulty"
-            className="border-primary-light bg-light h-full w-full rounded-lg border px-3 py-4 text-sm"
+            className="h-full w-full rounded-lg border border-primary-light bg-light px-3 py-4 text-sm"
             {...register("difficulty")}
             aria-invalid={errors.difficulty ? "true" : "false"}
-           >
+          >
             <option value="">Difficulty</option>
             <option value="easy">Easy</option>
             <option value="medium">Medium</option>
@@ -138,7 +144,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
 
         <button
           type="submit"
-          className="bg-primary hover:bg-primary-light inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white transition-all md:w-auto lg:col-span-2"
+          className="inline-flex items-center justify-center rounded-lg bg-primary px-5 py-2.5 text-center text-sm font-medium text-white transition-all hover:bg-primary-light md:w-auto lg:col-span-2"
         >
           <svg
             className="-ml-1 mr-2 h-5 w-5"
@@ -159,11 +165,11 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
         type="button"
         className="my-4 font-poly text-lg font-bold tracking-tight underline"
         onClick={() => setFilterShow(!filterShow)}
-        >
+      >
         {filterShow ? "Hide filters" : "Show more filters"}
       </button>
       <div
-        className={`border-primary-light rounded-lg border bg-white p-8 ${filterShow ? "block" : "hidden"}`}
+        className={`rounded-lg border border-primary-light bg-white p-8 ${filterShow ? "block" : "hidden"}`}
       >
         <div className="space-y-6">
           <h6 className="text-base font-medium text-black ">Prices</h6>
@@ -181,11 +187,10 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
                 min="1"
                 max="10000"
                 placeholder="Minimum price"
-                className="border-primary-light bg-light w-full rounded-lg border px-3 py-4 text-sm"
-         
+                className="w-full rounded-lg border border-primary-light bg-light px-3 py-4 text-sm"
                 {...register("priceFrom")}
                 aria-invalid={errors.priceFrom ? "true" : "false"}
-                />
+              />
             </div>
             <div className="w-full">
               <label
@@ -202,8 +207,8 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
                 {...register("priceTo")}
                 aria-invalid={errors.priceTo ? "true" : "false"}
                 placeholder="Maximum price"
-                className="border-primary-light bg-light w-full rounded-lg border px-3 py-4 text-sm"
-                />
+                className="w-full rounded-lg border border-primary-light bg-light px-3 py-4 text-sm"
+              />
             </div>
           </div>
         </div>
@@ -220,7 +225,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
                     value={value}
                     {...register("rating")}
                     checked={Number(watch("rating")) === value}
-                    className="text-primary-600 border-primary-light h-4 w-4 cursor-pointer bg-gray-100"
+                    className="text-primary-600 h-4 w-4 cursor-pointer border-primary-light bg-gray-100"
                   />
                   <RatingStars small rating={value} />
                 </label>
@@ -237,7 +242,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
               </label>
               <select
                 id="duration"
-                className="border-primary-light bg-light w-full cursor-pointer rounded-lg border px-3 py-4 text-sm"
+                className="w-full cursor-pointer rounded-lg border border-primary-light bg-light px-3 py-4 text-sm"
                 {...register("duration")}
                 aria-invalid={errors.duration ? "true" : "false"}
               >
@@ -260,7 +265,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
                 type="number"
                 min="1"
                 max="100"
-                className="border-primary-light bg-light w-full rounded-lg border px-3 py-4 text-sm"
+                className="w-full rounded-lg border border-primary-light bg-light px-3 py-4 text-sm"
                 {...register("maxGroupSize")}
                 placeholder="Maximun group size"
                 aria-invalid={errors.maxGroupSize ? "true" : "false"}

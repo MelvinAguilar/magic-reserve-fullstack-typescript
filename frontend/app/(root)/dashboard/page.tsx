@@ -1,29 +1,42 @@
 "use client";
 
+import Loading from "@/components/Loading";
 import { Title } from "@/components/Title";
 import { GenericCard } from "@/components/cards/GenericCard";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { getRecords } from "@/lib/handleApi";
 import { formatPrice } from "@/lib/utils";
 import { Stats } from "@/types";
-import { useEffect, useState } from "react";
+import { redirect } from "next/navigation";
+import { useContext, useEffect, useLayoutEffect, useState } from "react";
+import { AuthContext } from "@/context/AuthContext";
 
 const Page = () => {
+  const { isAuthenticated, loading } = useContext(AuthContext);
   const [data, setData] = useState<Stats>();
+  
+  useLayoutEffect(() => {
+    if (!loading && !isAuthenticated(["admin"])) {
+      redirect("/unauthorized");
+    }
+  }, [isAuthenticated, loading]);
+  
   useEffect(() => {
     const fetchData = async () => {
       const stats = await getRecords("/tours/stats");
       setData(stats);
     };
-
+    
     fetchData();
   }, []);
+
+  if (loading) return <Loading />;
 
   return (
     <DashboardLayout>
       <section>
         <Title as="h2" className="mb-6">
-          Reservations Stats
+          Reservation stats
         </Title>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-[1fr,2fr,1fr]">
@@ -56,7 +69,7 @@ const Page = () => {
 
       <section>
         <Title as="h2" className="mb-6 mt-12">
-          General Stats
+          General stats
         </Title>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -89,7 +102,7 @@ const Page = () => {
 
       <section>
         <Title as="h2" className="mb-6 mt-12">
-          Tours Stats by Difficulty
+          Tours stats by difficulty
         </Title>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

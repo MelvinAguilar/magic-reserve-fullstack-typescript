@@ -3,8 +3,10 @@
 import CartHeaderContainer from "@/components/cart/CartHeaderContainer";
 import { AuthContext } from "@/context/AuthContext";
 import Link from "next/link";
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { DropdownContainer } from "./UserDropdown";
+import MenuMobile from "@/components/MenuMobile";
+import useResponsiveMenuState from "@/hook/useResponsiveMenuState";
 
 export function NavItem({
   href,
@@ -15,7 +17,7 @@ export function NavItem({
 }) {
   return (
     <li>
-      <Link href={href} className="text-sm leading-5  transition-all">
+      <Link href={href} className="block text-sm leading-5 transition-all">
         {children}
       </Link>
     </li>
@@ -42,7 +44,24 @@ export function HighlightNavItem({
 }
 
 export default function Header() {
-  const { user,isAuthenticated } = useContext(AuthContext);
+  const { user, isAuthenticated } = useContext(AuthContext);
+  const [isMenuOpen, setIsMenuOpen] = useResponsiveMenuState();
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add("blocked");
+    } else {
+      document.body.classList.remove("blocked");
+    }
+  }, [isMenuOpen]);
 
   return (
     <header className="b-header fixed inset-x-0 top-0 z-50 bg-white transition">
@@ -56,15 +75,29 @@ export default function Header() {
         <Link href="/" className="text-lg font-bold">
           Magic Reserve
         </Link>
-        <nav className="ml-auto" aria-label="Main navigation">
-          <ul role="list" className="flex items-center gap-8">
+
+        <CartHeaderContainer className="ml-auto md:hidden" as="div" />
+
+        <MenuMobile toggleMenu={toggleMenu} isMenuOpen={isMenuOpen} />
+
+        <nav
+          className="ml-auto contents md:block"
+          aria-label="Main navigation"
+          onClick={toggleMenu}
+        >
+          <ul
+            id="navbar-menu"
+            role="list"
+            className="menu-options flex items-center gap-8"
+            onClick={handleMenuClick}
+          >
             {isAuthenticated(["admin"]) && (
               <NavItem href="/dashboard">Dashboard</NavItem>
             )}
-            
+
             <NavItem href="/tours">Tours</NavItem>
 
-            <CartHeaderContainer />
+            <CartHeaderContainer className="hidden md:block" />
 
             {user ? (
               <DropdownContainer />

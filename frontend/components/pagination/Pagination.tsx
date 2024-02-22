@@ -112,7 +112,7 @@ const Pagination = ({ total, limit, currentPage }: PaginationProps) => {
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="mt-8 flex justify-center">
       <button
         className={`text-content interactive rounded-l-md px-3 py-2 shadow-searchbar ${
           isFirstPage ? "cursor-not-allowed" : ""

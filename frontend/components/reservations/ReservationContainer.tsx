@@ -5,6 +5,7 @@ import { Reservations } from "@/types";
 import { useEffect, useState } from "react";
 import { Title } from "../Title";
 import ReservationCard from "./ReservationCard";
+import NoResult from "../NoResult";
 
 export default function ReservationContainer() {
   const [data, setData] = useState<Reservations[]>([]);
@@ -20,14 +21,15 @@ export default function ReservationContainer() {
 
   if (!data) {
     return (
-      <div className="p-8 pt-20">
-        <h2> No data found</h2>
-      </div>
+      <NoResult
+        title="No reservations found"
+        description="We couldn't find any reservations"
+      />
     );
   }
 
   return (
-    <section className="w-full mt-8">
+    <section className="mt-8 w-full">
       <Title className="text-2xl font-bold">
         Reservations &mdash; {data.length}
       </Title>

@@ -1,4 +1,4 @@
-import { toast } from "sonner";
+
 import fetchData, { genericApi } from "./apiUtils";
 
 export const getRecords = async (endpoint: string, count?: boolean) => {
@@ -10,8 +10,22 @@ export const getRecords = async (endpoint: string, count?: boolean) => {
       return response.data;
     }
   } catch (error) {
-    toast.error((error as Error).message);
+    console.error(error);
     return [];
+  }
+};
+
+export const getRecord = async (endpoint: string, count?: boolean) => {
+  try {
+    const response = await fetchData(endpoint);
+    if (count) {
+      return response;
+    } else {
+      return response.data;
+    }
+  } catch (error) {
+    console.error(error);
+    return null;
   }
 };
 
@@ -24,7 +38,7 @@ export const handleApi = async (
     const response = await genericApi(endpoint, method, data);
     return response;
   } catch (error) {
-    toast.error((error as Error).message);
-    return {};
+    console.error(error);
+    return null;
   }
 };

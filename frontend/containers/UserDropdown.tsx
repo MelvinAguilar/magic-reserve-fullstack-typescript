@@ -19,10 +19,10 @@ export function DropdownContainer() {
   }, [pathname]);
 
   return (
-    <div className="relative">
+    <div className="relative flex flex-col items-center">
       <button
         type="button"
-        className="dropdown f-300 flex size-8 items-center justify-center rounded-full bg-gray-800 text-sm text-white md:mr-0"
+        className="dropdown flex size-8 items-center justify-center rounded-full bg-gray-800 text-sm text-white md:mr-0"
         aria-expanded={isOpen}
         aria-controls="user-menu"
         onClick={() => setIsOpen(!isOpen)}
@@ -55,7 +55,7 @@ export function UserDropdown({ isOpen }: UserDropdownProps) {
 
   return (
     <div
-      className={`dropdown absolute right-0 top-auto z-50 my-4 w-56 divide-y divide-gray-100 rounded-lg bg-white text-base shadow-lg ${
+      className={`dropdown md:absolute right-0 top-full z-50 my-4 w-56 divide-y divide-gray-100 rounded-lg bg-white text-base shadow-lg ${
         isOpen ? "block" : "hidden"
       }`}
       id="user-menu"

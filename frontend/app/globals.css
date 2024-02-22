@@ -61,12 +61,15 @@
     content: "\2605\2605\2605\2605\2605";
     font-size: 2rem;
   }
+
   .small-stars:before {
     font-size: 1.25rem !important;
   }
+
   .empty-stars:before {
     -webkit-text-stroke: 1px #848484;
   }
+
   .full-stars:before {
     -webkit-text-stroke: 1px orange;
   }
@@ -104,5 +107,101 @@
 
   .transition-card {
     transition: opacity 0.3s ease;
+  }
+
+  .loading-dot {
+    animation: loading-animation 1s infinite;
+    opacity: 0;
+  }
+
+  .loading-dot:nth-child(2) {
+    animation-delay: 0.5s;
+  }
+
+  .loading-dot:nth-child(3) {
+    animation-delay: 0.75s;
+  }
+
+  @keyframes loading-animation {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  /* ------------------------------------ */
+  /*             Overlay Styles           */
+  /* ------------------------------------ */
+  header nav {
+    @apply invisible overflow-auto md:visible md:overflow-visible;
+  }
+
+  button[aria-expanded="true"] + nav {
+    @apply visible fixed inset-0 z-10 bg-primary/60;
+  }
+
+  .blocked {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* ------------------------------------ */
+  /*      Toggle Navbar Visibility        */
+  /* ------------------------------------ */
+
+  #navbar-menu {
+    transition:
+      right 0.5s ease-in-out,
+      visibility 0.5s ease-in-out;
+    @apply invisible -right-full md:visible md:right-0;
+  }
+
+  button[aria-expanded="true"] + nav > #navbar-menu {
+    @apply visible right-0;
+  }
+
+  button[aria-expanded="true"] + nav {
+    @apply !block;
+  }
+
+  /* ------------------------------------ */
+  /*         Hamburger Menu Styles        */
+  /* ------------------------------------ */
+
+  button[aria-expanded="true"] .bar1 {
+    @apply translate-y-2 rotate-45;
+  }
+
+  button[aria-expanded="true"] .bar2 {
+    @apply opacity-0;
+  }
+
+  button[aria-expanded="true"] .bar3 {
+    @apply -translate-y-2 -rotate-45;
+  }
+
+  /* ------------------------------------ */
+  /*        Mobile Device Menu Styles     */
+  /* ------------------------------------ */
+
+  .menu-options {
+    max-width: 18.75rem;
+
+    min-height: 100vh;
+    min-height: 100dvh;
+    z-index: 10;
+    @apply absolute top-0 right-0 w-full flex-col items-center bg-white p-6 pt-20 text-primary md:relative md:min-h-fit md:max-w-none md:p-0;
+  }
+
+  @media screen(md) {
+    .menu-options {
+      @apply block w-full flex-row bg-transparent text-primary;
+    }
   }
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import { Container } from "@/components/Container";
+import Loading from "@/components/Loading";
+import NoResult from "@/components/NoResult";
 import TourForm from "@/components/form/TourForm";
 import { AuthContext } from "@/context/AuthContext";
 import { getRecords } from "@/lib/handleApi";
@@ -27,11 +29,12 @@ const Page = ({ params }: ParamsProps) => {
     fetchData();
   }, [params]);
 
+  if (loading) return <Loading />;
+
   if (!data) {
-    return <p>Loading...</p>;
-  }
-  if (loading) {
-    return <p>Loading...</p>;
+    return (
+      <NoResult title="No tour found" description="We couldn't find any tour" />
+    );
   }
 
   return (

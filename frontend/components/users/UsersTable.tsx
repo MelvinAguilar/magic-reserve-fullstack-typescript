@@ -58,7 +58,6 @@ const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
         break;
       case "disableUser":
         // Logic to deactivate user
-
         updateUser(selectedUser._id, { active: false });
         break;
       case "deleteUser":
