@@ -91,9 +91,10 @@ exports.getAll = (Model: any) =>
       .limitFields()
       .paginate();
 
-    const docs = await features.query;
+    const docs = await features.query
+    const countDocs = await features.count();
 
-    sendResponse(res, 200, docs, docs.length);
+    sendResponse(res, 200, docs, countDocs);
   });
 
 /*
@@ -113,7 +114,8 @@ exports.getMyRecords = (Model: any, userIdField: string = 'user') =>
         .paginate();
 
       const docs = await features.query;
+      const countDocs = await features.count();
 
-      sendResponse(res, 200, docs, docs.length);
+      sendResponse(res, 200, docs, countDocs);
     },
   );

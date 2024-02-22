@@ -168,6 +168,7 @@ const tourSchema = new mongoose.Schema<ITour>(
     ],
   },
   {
+    timestamps: true,
     // Set options for toJSON and toObject
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

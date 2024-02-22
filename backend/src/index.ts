@@ -18,11 +18,7 @@ app.use(cors())
 app.use(helmet());
 
 // Development logging
-  app.use(morgan('dev'));
-  app.use(morgan('dev'));
-}
 app.use(morgan('dev'));
-}
 
 // Rate limiter to control the number of requests from a single IP address
 const limiter = rateLimit({

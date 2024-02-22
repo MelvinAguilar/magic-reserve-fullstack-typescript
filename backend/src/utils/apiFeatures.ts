@@ -62,6 +62,15 @@ class APIFeatures {
 
     return this;
   }
+
+  async count() {
+    const queryWithoutPagination = this.query
+    delete queryWithoutPagination.options;
+
+    const count = await queryWithoutPagination.countDocuments().clone();
+
+    return count;
+  }
 }
 
 module.exports = APIFeatures;
