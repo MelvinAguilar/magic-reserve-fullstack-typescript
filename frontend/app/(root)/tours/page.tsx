@@ -1,5 +1,7 @@
 import { Container } from "@/components/Container";
 import ToursShowcase from "@/components/home/ToursShowcase";
+import PageSizeSelector from "@/components/pagination/PageSizeSelector";
+import Pagination from "@/components/pagination/Pagination";
 import Filters from "@/components/tours/Filters";
 import { getRecords } from "@/lib/handleApi";
 import { filtersToStringServer } from "@/lib/utils";
@@ -29,13 +31,15 @@ const getTours = async (searchParams: {
   }
 
   const tourList = await getRecords(
-    "/tours?" + (searchParams ? filtersToStringServer(searchParams) : ""),
+    "/tours?sort=name&" +
+      (searchParams ? filtersToStringServer(searchParams) : ""),
+    true,
   );
   return tourList;
 };
 
 export default async function ToursPage({ searchParams }: SearchParamsProps) {
-  const tours = await getTours(searchParams);
+  const { data, recordCount } = await getTours(searchParams);
 
   return (
     <main className="flex-1">
@@ -46,7 +50,13 @@ export default async function ToursPage({ searchParams }: SearchParamsProps) {
       </div>
 
       <Container as="section" className="grid !py-16">
-        <ToursShowcase tours={tours} hideButton />
+        <ToursShowcase tours={data} hideButton />
+        <Pagination
+          total={recordCount}
+          limit={searchParams.limit ? parseInt(searchParams.limit) : 10}
+          currentPage={searchParams.page ? parseInt(searchParams.page) : 1}
+        />
+        <PageSizeSelector total={recordCount} />
       </Container>
     </main>
   );

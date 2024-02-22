@@ -8,7 +8,7 @@
   }
 
   .font-title {
-    font-size: 7.88888888889vw;
+    font-size: clamp(1rem, -0.5313rem + 9.68888888889vw, 6.359375rem);
   }
 
   .column-1 {
