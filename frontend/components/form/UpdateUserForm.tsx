@@ -54,7 +54,7 @@ const UpdateUserForm = ({ userId }: { userId: string }) => {
 
     const photo = resource?.secure_url || user?.photo;
 
-    const body = JSON.stringify({ name, email, photo });
+    const body = { name, email, photo };
 
     await handleApi(`/users/update-me`, "PATCH", body).then((data) => {
       if (data?.status === "success") {

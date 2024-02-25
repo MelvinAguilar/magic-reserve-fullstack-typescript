@@ -25,10 +25,14 @@ const UpdatePasswordForm = () => {
   const onSubmit: SubmitHandler<PasswordValues> = async (data) => {
     const { password, passwordCurrent } = data;
 
-    const body = JSON.stringify({ password, passwordCurrent });
+    const body = { password, passwordCurrent };
 
     await handleApi("/users/update-password", "PATCH", body).then((data) => {
-      if (data?.status === "success") toast.success("Password updated");
+      if (data?.status === "success") {
+        toast.success("Password updated");
+      } else {
+        toast.error("Password update failed");
+      }
     });
   };
 
