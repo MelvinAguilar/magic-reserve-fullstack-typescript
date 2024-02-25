@@ -21,7 +21,7 @@ export default async function Home() {
           alt=""
           width={1920}
           height={1080}
-          className="column-2 h-[92vh] w-[45vw] object-cover object-center opacity-85"
+          className="column-2 h-[92vh] w-[80vw] md:w-[45vw] object-cover object-center opacity-85"
         />
       </Container>
 

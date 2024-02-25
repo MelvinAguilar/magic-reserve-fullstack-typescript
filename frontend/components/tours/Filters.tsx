@@ -217,7 +217,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
             <h6 className="mb-2 text-base font-medium text-black">Rating</h6>
 
             {[5, 4, 3, 2, 1].map((value) => (
-              <div key={value} className="flex items-center">
+              <div key={value} className="mt-2 gap-2 flex items-center">
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
                     type="radio"
@@ -227,7 +227,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
                     checked={Number(watch("rating")) === value}
                     className="text-primary-600 h-4 w-4 cursor-pointer border-primary-light bg-gray-100"
                   />
-                  <RatingStars small rating={value} />
+                  <RatingStars small rating={value} hideCount />
                 </label>
               </div>
             ))}
@@ -273,7 +273,7 @@ const Filters = ({ searchParams }: SearchParamsProps) => {
             </div>
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap gap-4">
+        <div className="mt-8 grid md:grid-cols-2 gap-4">
           <Button type="submit">Apply filters</Button>
           <Button type="button" secondary onClick={() => handlerReset()}>
             Clear all

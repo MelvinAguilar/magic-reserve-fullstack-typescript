@@ -1,7 +1,7 @@
 import { Container } from "@/components/Container";
+import Galery from "@/components/Galery";
 import MapComponent from "@/components/Map";
 import NoResult from "@/components/NoResult";
-import NotFoundElement from "@/components/NoResult";
 import { Title } from "@/components/Title";
 import { GenericCard } from "@/components/cards/GenericCard";
 import AddCartButton from "@/components/cart/AddCartButton";
@@ -13,8 +13,8 @@ import Image from "next/image";
 
 const Page = async ({ params }: URLProps) => {
   const { id } = params;
-  const tour: Tour = await getRecord("/tours/" + id)
-  
+  const tour: Tour = await getRecord("/tours/" + id);
+
   if (!tour)
     return (
       <NoResult
@@ -31,7 +31,7 @@ const Page = async ({ params }: URLProps) => {
         as="main"
         className="mt-10 flex flex-col items-center justify-center"
       >
-        <div className="relative flex min-h-screen w-full items-center justify-center bg-primary/20">
+        <div className="relative flex min-h-screen w-full items-center rounded-lg justify-center bg-primary/20">
           <Image
             src={tour.imageCover}
             alt={tour.name}
@@ -44,6 +44,7 @@ const Page = async ({ params }: URLProps) => {
             {tour.name}
           </Title>
         </div>
+        <Galery tour = {tour}/>
       </Container>
       <Container as="section" className="!pt-2">
         <RatingStars
@@ -106,35 +107,7 @@ const Page = async ({ params }: URLProps) => {
             )}
           </GenericCard>
         </div>
-        <div className="grid gap-8 md:grid-cols-2">
-          <div>
-            <Image
-              src={tour.images[0]}
-              alt={tour.name}
-              width={600}
-              height={400}
-              className="rounded-lg object-cover"
-            />
-          </div>
-          <div>
-            <Image
-              src={tour.images[1]}
-              alt={tour.name}
-              width={600}
-              height={400}
-              className="rounded-lg object-cover"
-            />
-          </div>
-          <div>
-            <Image
-              src={tour.images[2]}
-              alt={tour.name}
-              width={600}
-              height={400}
-              className="rounded-lg object-cover"
-            />
-          </div>
-        </div>
+       
       </Container>
       <Container as="section">
         <Title className="mb-8 mt-8">Your adventure</Title>

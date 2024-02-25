@@ -64,7 +64,7 @@ export default function TourListPage({ searchParams }: SearchParamsProps) {
   return (
     <DashboardLayout>
       <div className="mb-8 flex items-center">
-        <Title as="h1">Tours Stats by Difficulty</Title>
+        <Title as="h1">Tour list</Title>
         <LinkComponent
           href="/tours/create"
           className="ml-auto flex !w-fit items-center"

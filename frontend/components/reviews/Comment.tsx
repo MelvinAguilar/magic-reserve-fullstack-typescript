@@ -13,7 +13,7 @@ interface CommentProps {
   user: {
     _id: string;
     name: string;
-    image?: string;
+    photo?: string;
   };
   createdAt: string;
   updatedAt: string;
@@ -37,11 +37,13 @@ const Comment = ({
   return (
     <div className="flex space-x-4 rounded-lg bg-light p-6 shadow-sm">
       <div className="shrink-0">
-        {user.image ? (
+        {user.photo ? (
           <Image
             className="size-10 rounded-full"
-            src={user.image}
+            src={user.photo}
             alt={user.name}
+            width={40}
+            height={40}
           />
         ) : (
           <div className="flex size-10 items-center justify-center rounded-full bg-gray-300">
@@ -53,7 +55,7 @@ const Comment = ({
         <p className="font-medium text-gray-900">{user.name}</p>
         <p className="mb-4 text-sm text-gray-500">{getTimestamp(updatedAt)}</p>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 mb-2">
           {Array.from({ length: 5 }, (_, i) => (
             <StarFilledIcon
               key={i}

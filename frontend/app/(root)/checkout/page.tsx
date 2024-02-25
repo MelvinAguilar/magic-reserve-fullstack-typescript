@@ -16,8 +16,8 @@ export default function Checkout() {
     return acc + item.price! * item.quantity!;
   }, 0);
   const formattedPrice = formatPrice(totalPrice);
-  const formattedTax = formatPrice(totalPrice * 0.13);
-  const formattedTotal = formatPrice(totalPrice + totalPrice * 0.1);
+  const formattedTax = formatPrice(totalPrice * 0.01);
+  const formattedTotal = formatPrice(totalPrice + totalPrice * 0.01);
 
   return (
     <Container className="mt-20 flex-1">

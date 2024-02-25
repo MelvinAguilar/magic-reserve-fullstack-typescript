@@ -207,13 +207,7 @@ const Reviews = ({ reviews, id }: ReviewsProps) => {
         {reviews.map((review: any) => (
           <Comment
             key={review.id}
-            id={review.id}
-            user={review.user}
-            createdAt={review.createdAt}
-            updatedAt={review.updatedAt}
-            rating={review.rating}
-            tour={review.tour}
-            review={review.review}
+            {...review}
             userId={user?._id}
             handleOpenModal={handleOpenModal(review.id)}
             handleUpdate={() => {

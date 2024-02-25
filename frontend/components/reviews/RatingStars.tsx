@@ -2,9 +2,15 @@ interface RatingStarsProps {
   rating: number;
   quantity?: number;
   small?: boolean;
+  hideCount?: boolean;
 }
 
-const RatingStars = ({ rating, quantity, small }: RatingStarsProps) => {
+const RatingStars = ({
+  rating,
+  quantity,
+  small,
+  hideCount,
+}: RatingStarsProps) => {
   return (
     <>
       <div className="flex items-center gap-4">
@@ -22,13 +28,15 @@ const RatingStars = ({ rating, quantity, small }: RatingStarsProps) => {
              }`}
           ></span>
         </div>
-        {quantity ? (
+        {!hideCount ? quantity ? (
           <p className="text-gray-500">{rating} out of 5</p>
         ) : (
-          <p className="text-gray-500">No reviews yet</p>
+          <p className="text-gray-500">No reviews yets</p>
+        ) : (
+          ""
         )}
       </div>
-      {/* {quantity && <p>{quantity} reviews</p>} */}
+      {!hideCount && quantity && <p>{quantity} reviews</p>}
     </>
   );
 };

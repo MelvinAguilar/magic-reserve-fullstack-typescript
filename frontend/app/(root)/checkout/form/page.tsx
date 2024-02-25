@@ -34,8 +34,8 @@ export default function Checkout() {
   }, 0);
 
   const formattedPrice = formatPrice(totalPrice);
-  const formattedTax = formatPrice(totalPrice * 0.13);
-  const formattedTotal = formatPrice(totalPrice + totalPrice * 0.1);
+  const formattedTax = formatPrice(totalPrice * 0.01);
+  const formattedTotal = formatPrice(totalPrice + totalPrice * 0.01);
 
   const {
     register,
@@ -62,7 +62,7 @@ export default function Checkout() {
           subtotal: tour.price * tour.quantity!,
         };
       }),
-      total: totalPrice + totalPrice * 0.1,
+      total: totalPrice + totalPrice * 0.01,
     };
 
     await handleApi("/reservations", "POST", reservation).then((data) => {
@@ -108,7 +108,7 @@ export default function Checkout() {
   };
 
   return (
-    <Container className=" grid !p-0 lg:grid-cols-2 ">
+    <Container className=" grid !p-0 lg:grid-cols-2 !pt-6">
       <h1 className="sr-only">Checkout</h1>
 
       <section className="bg-primary px-8 py-12 pt-20 text-white md:px-10 lg:col-start-2 lg:row-start-1">
