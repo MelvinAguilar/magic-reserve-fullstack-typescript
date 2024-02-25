@@ -47,6 +47,12 @@
 
 </div>
 
+## Test credentials
+
+| Email  | Password |
+| ------------- | ------------- |
+| test@user.com  | password02  |
+
 ## 🌟 Server Features
 
 - 🔐 **Authentication and Authorization**:
